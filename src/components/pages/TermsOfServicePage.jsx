@@ -189,9 +189,9 @@ Address: 11 Koforidua street, off mambolo, Wuse Zone 2, Abuja, NG`
     }
   ];
 
-  const handleSectionToggle = (index) => {
-    setActiveSection(activeSection === index ? null : index);
-  };
+  // const handleSectionToggle = (index) => {
+  //   setActiveSection(activeSection === index ? null : index);
+  // };
 
   return (
     <div className="privacy-page legal-page">

@@ -23,7 +23,7 @@ const AccountDeletionPage = () => {
 
   // Firebase Functions URL - Replace with your project ID
   const FIREBASE_PROJECT_ID = 'solacewave-15844';
-  const FUNCTIONS_BASE_URL = `https://us-central1-${FIREBASE_PROJECT_ID}.cloudfunctions.net`;
+  //const FUNCTIONS_BASE_URL = `https://us-central1-${FIREBASE_PROJECT_ID}.cloudfunctions.net`;
 
   useEffect(() => {
     // Pre-fill email if user is authenticated

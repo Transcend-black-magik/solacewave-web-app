@@ -12,7 +12,7 @@ const Footer = () => {
   const [newsletterResult, setNewsletterResult] = useState(null);
 
   const FIREBASE_PROJECT_ID = 'solacewave-15844'; 
-  const FUNCTIONS_BASE_URL = `https://us-central1-${FIREBASE_PROJECT_ID}.cloudfunctions.net`;
+  //const FUNCTIONS_BASE_URL = `https://us-central1-${FIREBASE_PROJECT_ID}.cloudfunctions.net`;
 
   // Handle newsletter subscription
   const handleNewsletterSubmit = async (e) => {

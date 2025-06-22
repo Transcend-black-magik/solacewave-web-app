@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '../layout/Header';
 import Footer from '../layout/Footer';
 import '../../styles/components/therapists-page.css';
+import { id } from 'date-fns/locale';
 
 const TherapistsPage = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -113,7 +114,11 @@ const TherapistsPage = () => {
       setFilteredTherapists(therapistsData);
       setIsLoaded(true);
     }, 800);
-  }, []);
+  }, [
+    id, // This is just to ensure the effect runs once on mount
+    therapistsData // Dependency to ensure it runs when therapistsData changes
+
+  ]);
   
   // Filter therapists based on category and search term
   useEffect(() => {
@@ -161,14 +166,14 @@ const TherapistsPage = () => {
   }, [isLoaded]);
   
   // Handle filter change
-  const handleFilterChange = (filter) => {
-    setActiveFilter(filter);
-  };
+  // const handleFilterChange = (filter) => {
+  //   setActiveFilter(filter);
+  // };
   
   // Handle search input change
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
+  // const handleSearchChange = (e) => {
+  //   setSearchTerm(e.target.value);
+  // };
 
   // Handle Get Started button click
   const handleGetStarted = () => {
