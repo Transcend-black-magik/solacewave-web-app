@@ -1,0 +1,129 @@
+.download-app-page {
+    min-height: 100vh;
+    padding: 100px 0 var(--spacing-xl);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .download-app-container {
+    background-color: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: var(--spacing-xl);
+    width: 100%;
+    max-width: 700px;
+    text-align: center;
+    animation: fadeIn var(--transition-normal) ease;
+  }
+  
+  .download-app-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .success-icon {
+    font-size: 4rem;
+    color: var(--success);
+    margin-bottom: var(--spacing-md);
+    animation: pulse 2s infinite;
+  }
+  
+  .download-app-content h1 {
+    margin-bottom: var(--spacing-sm);
+    color: var(--success);
+  }
+  
+  .congrats-message {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .next-steps {
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .app-preview {
+    margin: var(--spacing-md) 0 var(--spacing-xl);
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .app-preview img {
+    width: 100%;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-lg);
+  }
+  
+  .download-options {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+  }
+  
+  .download-option {
+    transition: transform var(--transition-normal) ease;
+  }
+  
+  .download-option:hover {
+    transform: scale(1.05);
+  }
+  
+  .store-button img {
+    height: 50px;
+  }
+  
+  .email-confirmation {
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background-color: var(--background-light);
+    border-radius: var(--border-radius-md);
+  }
+  
+  .email-notice {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+    font-size: var(--font-size-sm);
+    color: var(--text-medium);
+  }
+  
+  .email-notice i {
+    color: var(--primary-color);
+  }
+  
+  .text-button {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0;
+    margin-left: var(--spacing-xs);
+  }
+  
+  .text-button:hover {
+    text-decoration: underline;
+  }
+  
+  .browser-option {
+    margin-top: var(--spacing-lg);
+    font-size: var(--font-size-sm);
+    color: var(--text-medium);
+  }
+  
+  @media (max-width: 768px) {
+    .download-app-container {
+      max-width: 90%;
+      padding: var(--spacing-lg);
+    }
+    
+    .download-options {
+      flex-direction: column;
+      align-items: center;
+    }
+  }

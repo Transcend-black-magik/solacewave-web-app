@@ -1,0 +1,83 @@
+.create-account-page {
+    min-height: 100vh;
+    padding: 100px 0 var(--spacing-xl);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .account-creation-container {
+    background-color: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: var(--spacing-xl);
+    width: 100%;
+    max-width: 600px;
+    animation: slideInUp var(--transition-normal) ease;
+  }
+  
+  .account-creation-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+  }
+  
+  .account-creation-header h1 {
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .account-creation-header p {
+    color: var(--text-medium);
+  }
+  
+  .account-creation-form {
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .password-hint {
+    color: var(--text-medium);
+    font-size: var(--font-size-sm);
+    margin-top: var(--spacing-xs);
+    margin-bottom: 0;
+  }
+  
+  .checkbox-label {
+    display: flex;
+    align-items: flex-start;
+  }
+  
+  .checkbox-label input {
+    margin-top: 5px;
+    margin-right: var(--spacing-sm);
+  }
+  
+  .checkbox-label.error {
+    color: var(--error);
+  }
+  
+  .form-group.checkbox {
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .error-text {
+    color: var(--error);
+    font-size: var(--font-size-sm);
+    margin-top: var(--spacing-xs);
+    margin-bottom: 0;
+  }
+  
+  .account-creation-footer {
+    text-align: center;
+    color: var(--text-medium);
+  }
+  
+  .account-creation-footer a {
+    color: var(--primary-color);
+    font-weight: 500;
+  }
+  
+  @media (max-width: 768px) {
+    .account-creation-container {
+      max-width: 90%;
+      padding: var(--spacing-lg);
+    }
+  }

@@ -1,0 +1,115 @@
+.questionnaire-page {
+    min-height: 100vh;
+    padding: 100px 0 var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .questionnaire-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+    width: 100%;
+  }
+  
+  .questionnaire-header h2 {
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .questionnaire-container {
+    background-color: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: var(--spacing-xl);
+    width: 100%;
+    max-width: 800px;
+    transition: opacity var(--transition-normal) ease, transform var(--transition-normal) ease;
+  }
+  
+  .questionnaire-container.fade-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .questionnaire-container.fade-out {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  
+  .question-number {
+    font-size: var(--font-size-sm);
+    color: var(--text-medium);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .question-main {
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.3;
+  }
+  
+  .question-instruction {
+    color: var(--text-medium);
+    margin-bottom: var(--spacing-md);
+    font-style: italic;
+  }
+  
+  .question-group {
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .sub-question {
+    margin-bottom: var(--spacing-lg);
+    padding-left: var(--spacing-md);
+    border-left: 3px solid var(--primary-light);
+  }
+  
+  .sub-question:last-child {
+    margin-bottom: 0;
+  }
+  
+  .question-text {
+    font-weight: 500;
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--spacing-xl);
+  }
+  
+  .questionnaire-footer {
+    margin-top: var(--spacing-lg);
+    text-align: center;
+    color: var(--text-medium);
+    font-size: var(--font-size-sm);
+  }
+  
+  .country-select-container {
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  @media (max-width: 768px) {
+    .questionnaire-container {
+      padding: var(--spacing-lg);
+      max-width: 90%;
+    }
+    
+    .question-main {
+      font-size: var(--font-size-xl);
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .navigation-buttons {
+      flex-wrap: wrap;
+      gap: var(--spacing-sm);
+    }
+    
+    .navigation-buttons .btn {
+      flex: 1;
+      min-width: 120px;
+    }
+  }

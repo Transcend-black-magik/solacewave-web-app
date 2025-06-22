@@ -1,0 +1,248 @@
+/* Message Thread Styles */
+.message-thread-container {
+    display: flex;
+    flex-direction: column;
+    height: 600px;
+    background-color: var(--background-light);
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+  }
+  
+  .message-thread-header {
+    padding: var(--spacing-md) var(--spacing-lg);
+    background-color: white;
+    border-bottom: 1px solid var(--background-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .thread-therapist {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+  
+  .therapist-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  
+  .therapist-info h3 {
+    font-size: var(--font-size-md);
+    margin-bottom: 0;
+  }
+  
+  .therapist-info p {
+    font-size: var(--font-size-xs);
+    color: var(--text-medium);
+    margin: 0;
+  }
+  
+  .thread-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+  }
+  
+  .message-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-md) var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+  
+  .messages-date-separator {
+    text-align: center;
+    margin: var(--spacing-md) 0;
+    position: relative;
+  }
+  
+  .messages-date-separator::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: var(--text-light);
+    z-index: 1;
+  }
+  
+  .messages-date-separator span {
+    position: relative;
+    background-color: var(--background-light);
+    padding: 0 var(--spacing-md);
+    color: var(--text-medium);
+    font-size: var(--font-size-xs);
+    z-index: 2;
+  }
+  
+  .message-item {
+    display: flex;
+    max-width: 70%;
+  }
+  
+  .therapist-message {
+    align-self: flex-start;
+  }
+  
+  .client-message {
+    align-self: flex-end;
+    margin-left: auto;
+  }
+  
+  .message-content {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .message-bubble {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    position: relative;
+  }
+  
+  .therapist-message .message-bubble {
+    background-color: white;
+    border: 1px solid var(--text-light);
+  }
+  
+  .client-message .message-bubble {
+    background-color: var(--primary-bg);
+    color: var(--primary-dark);
+  }
+  
+  .message-bubble p {
+    margin: 0;
+    word-break: break-word;
+  }
+  
+  .message-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-top: 4px;
+  }
+  
+  .therapist-message .message-meta {
+    padding-left: var(--spacing-sm);
+  }
+  
+  .client-message .message-meta {
+    padding-right: var(--spacing-sm);
+    justify-content: flex-end;
+  }
+  
+  .message-time {
+    font-size: var(--font-size-xs);
+    color: var(--text-medium);
+  }
+  
+  .message-status {
+    font-size: var(--font-size-xs);
+    color: var(--text-light);
+  }
+  
+  .message-status.read {
+    color: var(--primary-color);
+  }
+  
+  .message-input {
+    padding: var(--spacing-md);
+    background-color: white;
+    border-top: 1px solid var(--background-light);
+    display: flex;
+    gap: var(--spacing-sm);
+  }
+  
+  .message-input input {
+    flex: 1;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--text-light);
+    border-radius: var(--border-radius-full);
+    font-size: var(--font-size-md);
+  }
+  
+  .message-input input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+  }
+  
+  .send-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color var(--transition-fast) ease;
+  }
+  
+  .send-button:hover {
+    background-color: var(--primary-dark);
+  }
+  
+  .send-button:disabled {
+    background-color: var(--text-light);
+    cursor: not-allowed;
+  }
+  
+  .no-messages {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-3xl) var(--spacing-lg);
+    text-align: center;
+  }
+  
+  .no-messages .message-icon {
+    font-size: 3rem;
+    color: var(--text-light);
+    margin-bottom: var(--spacing-md);
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: var(--background-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .no-messages h3 {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .no-messages p {
+    color: var(--text-medium);
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .message-error {
+    padding: var(--spacing-lg);
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    .message-thread-container {
+      height: 500px;
+    }
+    
+    .thread-actions {
+      display: none;
+    }
+    
+    .message-item {
+      max-width: 85%;
+    }
+  }

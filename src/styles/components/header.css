@@ -1,0 +1,213 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: transparent;
+  transition: background-color var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
+  z-index: var(--z-above);
+  height: 80px;
+  display: flex;
+  align-items: center;
+}
+
+.header.scrolled {
+  background-color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.header.simplified {
+  background-color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Add a subtle gradient background to the transparent header for better text visibility over video */
+.header:not(.scrolled):not(.simplified) {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1) 50%, transparent);
+}
+
+/* Ensure text is visible on transparent header over video */
+.header:not(.scrolled):not(.simplified) .logo,
+.header:not(.scrolled):not(.simplified) .nav-links a {
+  color: var(--text-dark);
+  text-shadow: 0px 1px 3px rgba(255, 255, 255, 0.8);
+}
+
+/* Ensure buttons are visible on transparent header */
+.header:not(.scrolled):not(.simplified) .btn-outline {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  text-shadow: 0px 1px 3px rgba(255, 255, 255, 0.5);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: var(--font-size-lg);
+  color: var(--text-dark);
+}
+
+.logo img {
+  height: 40px;
+  margin-right: var(--spacing-sm);
+}
+
+.logo-text{
+  color: var(--primary-color);
+}
+
+.menu-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  width: 30px;
+  height: 30px;
+  padding: 5px;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.menu-toggle span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background-color: var(--text-dark);
+  transition: all var(--transition-fast) ease;
+}
+
+.menu-toggle.open span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.menu-toggle.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.open span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+}
+
+.nav-links {
+  display: flex;
+  margin-right: var(--spacing-xl);
+}
+
+.nav-links li {
+  margin: 0 var(--spacing-md);
+}
+
+.nav-links a {
+  color: var(--text-dark);
+  font-weight: 500;
+  padding: 0.5rem 0;
+  position: relative;
+}
+
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--primary-color);
+  transition: width var(--transition-fast) ease;
+}
+
+.nav-links a:hover::after,
+.nav-links a.active::after {
+  width: 100%;
+}
+
+.nav-buttons {
+  display: flex;
+}
+
+.nav-buttons .btn {
+  margin-left: var(--spacing-sm);
+}
+
+.header-questionnaire-label {
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  color: var(--text-medium);
+  font-weight: 500;
+}
+
+.back-button i {
+  margin-right: var(--spacing-xs);
+}
+
+@media (max-width: 992px) {
+  .menu-toggle {
+    display: flex;
+  }
+  
+  .main-nav {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    width: 100%;
+    flex-direction: column;
+    background-color: white;
+    box-shadow: var(--shadow-md);
+    padding: var(--spacing-lg);
+    transform: translateY(-100%);
+    opacity: 0;
+    transition: transform var(--transition-normal) ease, opacity var(--transition-normal) ease;
+    pointer-events: none;
+  }
+  
+  .main-nav.open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .nav-links {
+    flex-direction: column;
+    margin-right: 0;
+    margin-bottom: var(--spacing-lg);
+    width: 100%;
+  }
+  
+  .nav-links li {
+    margin: 0;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .nav-links a {
+    display: block;
+    padding: var(--spacing-md);
+  }
+  
+  .nav-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .nav-buttons .btn {
+    margin-left: 0;
+    margin-top: var(--spacing-sm);
+  }
+}
