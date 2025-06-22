@@ -28,6 +28,7 @@ const LoginPage = () => {
     setFormData(prev => ({
       ...prev,
       [name]: value
+      
     }));
     
     // Clear error for this field
