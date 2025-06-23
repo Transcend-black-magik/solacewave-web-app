@@ -106,7 +106,7 @@ const ContactPage = () => {
       
       try {
         // Replace this URL with your deployed server URL
-        const API_BASE_URL = 'solacewave-web-app-production.up.railway.app'; // Update this!
+        const API_BASE_URL = 'https://solacewave-web-app-production.up.railway.app'; // Update this!
         
         const response = await fetch(`${API_BASE_URL}/api/contact/submit`, {
           method: 'POST',
