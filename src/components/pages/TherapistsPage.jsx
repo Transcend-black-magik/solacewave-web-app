@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Header from '../layout/Header';
 import Footer from '../layout/Footer';
 import '../../styles/components/therapists-page.css';
-import { id } from 'date-fns/locale';
+//import { id } from 'date-fns/locale';
 
 const TherapistsPage = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -11,7 +11,7 @@ const TherapistsPage = () => {
   const [therapists, setTherapists] = useState([]);
   const [filteredTherapists, setFilteredTherapists] = useState([]);
   
-  const therapistsData = [
+  const therapistsData = useMemo(() => ([
     {
       id: 1,
       name: "Faisal Sanusi Ibrahim",
@@ -104,7 +104,7 @@ const TherapistsPage = () => {
       category: "social-worker"
     },
     
-  ];
+  ]), []);
   
   // Initialize therapists data
   useEffect(() => {
