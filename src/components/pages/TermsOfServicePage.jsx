@@ -5,7 +5,7 @@ import '../../styles/components/legal-pages.css';
 
 const PrivacyPolicyPage = () => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [activeSection, setActiveSection] = useState(null);
+  // const [activeSection, setActiveSection] = useState(null);
 
   useEffect(() => {
     // Add animation delay to simulate content loading

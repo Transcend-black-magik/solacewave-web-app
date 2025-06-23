@@ -22,7 +22,7 @@ const ContactPage = () => {
   const [isNewsletterSubmitting, setIsNewsletterSubmitting] = useState(false);
   const [newsletterResult, setNewsletterResult] = useState(null);
 
-  const FIREBASE_PROJECT_ID = 'solacewave-15844'; 
+  // const FIREBASE_PROJECT_ID = 'solacewave-15844'; 
   //const FUNCTIONS_BASE_URL = `https://us-central1-${FIREBASE_PROJECT_ID}.cloudfunctions.net`;
 
   useEffect(() => {

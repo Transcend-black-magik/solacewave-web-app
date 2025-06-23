@@ -6,8 +6,8 @@ import { id } from 'date-fns/locale';
 
 const TherapistsPage = () => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [activeFilter, setActiveFilter] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [activeFilter] = useState('all');
+  const [searchTerm] = useState('');
   const [therapists, setTherapists] = useState([]);
   const [filteredTherapists, setFilteredTherapists] = useState([]);
   
@@ -115,11 +115,8 @@ const TherapistsPage = () => {
       setIsLoaded(true);
     }, 800);
   }, [
-    id, // This is just to ensure the effect runs once on mount
     therapistsData // Dependency to ensure it runs when therapistsData changes
-
   ]);
-  
   // Filter therapists based on category and search term
   useEffect(() => {
     if (therapists.length > 0) {

@@ -22,7 +22,7 @@ const AccountDeletionPage = () => {
   const navigate = useNavigate();
 
   // Firebase Functions URL - Replace with your project ID
-  const FIREBASE_PROJECT_ID = 'solacewave-15844';
+  // const FIREBASE_PROJECT_ID = 'solacewave-15844';
   //const FUNCTIONS_BASE_URL = `https://us-central1-${FIREBASE_PROJECT_ID}.cloudfunctions.net`;
 
   useEffect(() => {
