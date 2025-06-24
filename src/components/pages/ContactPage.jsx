@@ -106,22 +106,34 @@ const ContactPage = () => {
 
       try {
         // Use the same API as your newsletter for consistency and reliability
-        const API_BASE_URL = 'https://solace-wave-api-production.up.railway.app';
+        const API_BASE_URL = 'https://solacewave-web-app-production.up.railway.app';
 
-        const response = await fetch(`${API_BASE_URL}/api/contact/submit`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-        });
+        let response, result;
+        try {
+          response = await fetch(`${API_BASE_URL}/api/contact/submit`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+          });
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(errorText || `HTTP error! status: ${response.status}`);
+          // Check for CORS/network errors
+          if (!response.ok) {
+            let errorText;
+            try {
+              errorText = await response.text();
+            } catch {
+              errorText = null;
+            }
+            throw new Error(errorText || `HTTP error! status: ${response.status}`);
+          }
+
+          result = await response.json();
+        } catch (err) {
+          // This block catches CORS/network errors
+          throw new Error('Network error. Please check your connection and try again.');
         }
-
-        const result = await response.json();
 
         if (result.success) {
           setSubmitResult({
