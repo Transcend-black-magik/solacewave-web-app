@@ -38,6 +38,7 @@
     z-index: 8;
     max-width: 800px;
     margin: 0 auto;
+    padding-top: var(--spacing-xl);
   }
   
   .therapists-hero h1 {
