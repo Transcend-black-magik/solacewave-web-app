@@ -99,15 +99,15 @@ const ContactPage = () => {
   // Handle contact form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       setIsSubmitting(true);
       setSubmitResult(null);
-      
+
       try {
-        // Replace this URL with your deployed server URL
-        const API_BASE_URL = 'https://solacewave-web-app-production.up.railway.app'; // Update this!
-        
+        // Use the same API as your newsletter for consistency and reliability
+        const API_BASE_URL = 'https://solace-wave-api-production.up.railway.app';
+
         const response = await fetch(`${API_BASE_URL}/api/contact/submit`, {
           method: 'POST',
           headers: {
@@ -115,25 +115,28 @@ const ContactPage = () => {
           },
           body: JSON.stringify(formData),
         });
-        
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText || `HTTP error! status: ${response.status}`);
+        }
+
         const result = await response.json();
-        
+
         if (result.success) {
           setSubmitResult({
             success: true,
             message: result.message
           });
-          
-          // Reset form after successful submission
+
           setFormData({
             name: '',
             email: '',
             phone: '',
-            subject: 'General Inquiry',
+            subject: '',
             message: ''
           });
-          
-          // Clear success message after 8 seconds
+
           setTimeout(() => {
             setSubmitResult(null);
           }, 8000);
@@ -147,7 +150,7 @@ const ContactPage = () => {
         console.error('Contact form submission error:', error);
         setSubmitResult({
           success: false,
-          message: 'Network error. Please check your connection and try again.'
+          message: error.message || 'Network error. Please check your connection and try again.'
         });
       } finally {
         setIsSubmitting(false);
