@@ -8,6 +8,18 @@
     ],
     "rewrites": [
       {
+        "source": "/api/contact/submit",
+        "function": "submitContactForm"
+      },
+      {
+        "source": "/api/newsletter/subscribe",
+        "function": "subscribeNewsletter"
+      },
+      {
+        "source": "/api/account/delete",
+        "function": "requestAccountDeletion"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

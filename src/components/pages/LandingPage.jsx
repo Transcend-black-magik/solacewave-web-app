@@ -38,7 +38,7 @@ const LandingPage = () => {
         } catch (e) {
           // Fallback already in place with autoplay attribute
         }
-      }, 500); // Delay loading the video by 1 second
+      }, 100); // Delay loading the video by 1 second
       
       return () => clearTimeout(timer);
     }

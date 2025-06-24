@@ -98,77 +98,52 @@ const ContactPage = () => {
 
   // Handle contact form submission
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (validateForm()) {
-      setIsSubmitting(true);
-      setSubmitResult(null);
+  if (validateForm()) {
+    setIsSubmitting(true);
+    setSubmitResult(null);
 
-      try {
-        // Use the same API as your newsletter for consistency and reliability
-        const API_BASE_URL = 'https://solacewave-web-app-production.up.railway.app';
+    try {
+      const response = await fetch('/api/contact/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-        let response, result;
-        try {
-          response = await fetch(`${API_BASE_URL}/api/contact/submit`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData),
-          });
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || `HTTP error! Status: ${response.status}`);
+      }
 
-          // Check for CORS/network errors
-          if (!response.ok) {
-            let errorText;
-            try {
-              errorText = await response.text();
-            } catch {
-              errorText = null;
-            }
-            throw new Error(errorText || `HTTP error! status: ${response.status}`);
-          }
+      const result = await response.json();
 
-          result = await response.json();
-        } catch (err) {
-          // This block catches CORS/network errors
-          throw new Error('Network error. Please check your connection and try again.');
-        }
+      if (result.success) {
+        setSubmitResult({ success: true, message: result.message });
+        setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
 
-        if (result.success) {
-          setSubmitResult({
-            success: true,
-            message: result.message
-          });
-
-          setFormData({
-            name: '',
-            email: '',
-            phone: '',
-            subject: '',
-            message: ''
-          });
-
-          setTimeout(() => {
-            setSubmitResult(null);
-          }, 8000);
-        } else {
-          setSubmitResult({
-            success: false,
-            message: result.message || 'Failed to send message. Please try again.'
-          });
-        }
-      } catch (error) {
-        console.error('Contact form submission error:', error);
+        setTimeout(() => {
+          setSubmitResult(null);
+        }, 8000);
+      } else {
         setSubmitResult({
           success: false,
-          message: error.message || 'Network error. Please check your connection and try again.'
+          message: result.message || 'Failed to send message. Please try again.',
         });
-      } finally {
-        setIsSubmitting(false);
       }
+    } catch (error) {
+      console.error('Contact form error:', error);
+      setSubmitResult({
+        success: false,
+        message: error.message || 'Network error. Please try again.',
+      });
+    } finally {
+      setIsSubmitting(false);
     }
-  };
+  }
+};
 
   const handleNewsletterSubmit = async (e) => {
     e.preventDefault();
