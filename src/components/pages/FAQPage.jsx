@@ -66,7 +66,7 @@ const FAQPage = () => {
     therapists: [
       {
         question: "Can I change therapists if I'm not satisfied?",
-        answer: "Absolutely! Finding the right therapist match is important. If you feel your current therapist isn't the right fit, you can request a change anytime through your account dashboard, and we'll match you with someone new."
+        answer: "Absolutely! Finding the right therapist match is important. If you feel your current therapist isn't the right fit, you can request a change anytime through your account dashboard, and we'll match you with someone new. Or you can contact our customer service team to change easily at (234) 8064427513."
       },
       {
         question: "How quickly will I be matched with a therapist?",
@@ -102,7 +102,7 @@ const FAQPage = () => {
       },
       {
         question: "How do I cancel my subscription?",
-        answer: "You can cancel your subscription anytime through your account settings page or by contacting support."
+        answer: "You can cancel your subscription anytime through your account settings page or by contacting support at (234) 8064427513."
       }
     ]
   };

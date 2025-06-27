@@ -433,7 +433,7 @@ const ServicesPage = () => {
                 <h3>Audio Sessions</h3>
                 <p>Voice-only therapy sessions for those who prefer not to be on camera.</p>
                 <ul className="option-features">
-                  <li><i className="fas fa-check"></i> Scheduled 30-50 minute sessions</li>
+                  <li><i className="fas fa-check"></i> Scheduled 30-60 minute sessions</li>
                   <li><i className="fas fa-check"></i> Great for on-the-go or limited bandwidth</li>
                   <li><i className="fas fa-check"></i> Focus entirely on the conversation</li>
                 </ul>
