@@ -104,15 +104,16 @@ const ServicesPage = () => {
                   </div>
                   <div className="therapy-details">
                     <h3>Individual Therapy</h3>
-                    <p>Improve family dynamics and resolve conflicts with specialized family therapy. Our therapists work with all family members to enhance communication, understanding, and functioning within the family system.</p>
+                    <p>Heal, grow, and gain clarity through personalized individual therapy. Our therapists provide a safe, supportive space to explore your thoughts, emotions, and experiences. We work collaboratively with you to build resilience, deepen self-awareness, and overcome personal challenges.</p>
                     <h4>Common areas we address:</h4>
                     <ul className="therapy-areas">
-                      <li><i className="fas fa-check-circle"></i> Parent-child conflicts</li>
-                      <li><i className="fas fa-check-circle"></i> Sibling relationships</li>
-                      <li><i className="fas fa-check-circle"></i> Blended family challenges</li>
-                      <li><i className="fas fa-check-circle"></i> Family communication</li>
-                      <li><i className="fas fa-check-circle"></i> Life cycle transitions</li>
-                      <li><i className="fas fa-check-circle"></i> Coping with family illness</li>
+                      <li><i className="fas fa-check-circle"></i> Anxiety and stress</li>
+                      <li><i className="fas fa-check-circle"></i> Depression and mood disorders</li>
+                      <li><i className="fas fa-check-circle"></i> Self-esteem and identity concerns</li>
+                      <li><i className="fas fa-check-circle"></i> Trauma and past experiences</li>
+                      <li><i className="fas fa-check-circle"></i> Life transitions and decision-making</li>
+                      <li><i className="fas fa-check-circle"></i> Grief and loss</li>
+                      <li><i className="fas fa-check-circle"></i> Personal growth and emotional regulation</li>
                     </ul>
                     <div className="therapy-cta">
                       <button onClick={handleGetStarted} className="btn btn-primary">Get Matched</button>
@@ -125,7 +126,7 @@ const ServicesPage = () => {
               {activeTab === 'couples' && (
                 <div className="therapy-type-content">
                   <div className="therapy-image">
-                    <img src="/assets/images/couples-therapy.jpg" alt="Couples Therapy" />
+                    <img src="/assets/images/couples_therapy.jpg" alt="Couples Therapy" />
                   </div>
                   <div className="therapy-details">
                     <h3>Couples Therapy</h3>
@@ -150,7 +151,7 @@ const ServicesPage = () => {
               {activeTab === 'family' && (
                 <div className="therapy-type-content">
                   <div className="therapy-image">
-                    <img src="/assets/images/family-therapy.jpg" alt="Family Therapy" />
+                    <img src="/assets/images/family_therapy.jpg" alt="Family Therapy" />
                   </div>
                   <div className="therapy-details">
                     <h3>Family Therapy</h3>
