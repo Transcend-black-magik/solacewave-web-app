@@ -421,7 +421,7 @@ const ServicesPage = () => {
                 <h3>Video Sessions</h3>
                 <p>Face-to-face virtual therapy sessions from the comfort of your home or any private space.</p>
                 <ul className="option-features">
-                  <li><i className="fas fa-check"></i> Scheduled 30-50 minute sessions</li>
+                  <li><i className="fas fa-check"></i> Scheduled 30-60 minute sessions</li>
                   <li><i className="fas fa-check"></i> Most similar to traditional in-person therapy</li>
                   <li><i className="fas fa-check"></i> Secure, HIPAA-compliant platform</li>
                 </ul>

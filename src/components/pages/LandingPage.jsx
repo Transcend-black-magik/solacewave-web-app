@@ -231,7 +231,7 @@ const LandingPage = () => {
                 {activeStep === 2 && (
                   <div className="workflow-step-content">
                     <div className="step-illustration">
-                      <img src="/assets/images/match-illustration.svg" alt="Match with Therapist" />
+                      <img src="/assets/images/match-illustration.jpg" alt="Match with Therapist" />
                     </div>
                     <div className="step-details">
                       <h3>Get Matched with the Perfect Therapist</h3>
@@ -257,7 +257,7 @@ const LandingPage = () => {
                 {activeStep === 3 && (
                   <div className="workflow-step-content">
                     <div className="step-illustration">
-                      <img src="/assets/images/therapy-illustration.svg" alt="Begin Therapy" />
+                      <img src="/assets/images/therapy-illustration.jpg" alt="Begin Therapy" />
                     </div>
                     <div className="step-details">
                       <h3>Start Your Therapy Journey</h3>

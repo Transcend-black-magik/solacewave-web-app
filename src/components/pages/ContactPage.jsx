@@ -427,12 +427,14 @@ const ContactPage = () => {
                     placeholder="Your email address" 
                     value={newsletterEmail}
                     onChange={(e) => setNewsletterEmail(e.target.value)}
-                    required 
+                    required
+                    style={{ marginBottom: '10px' }} 
                   />
                   <button 
                     type="submit" 
                     className="btn btn-primary"
                     disabled={isNewsletterSubmitting}
+                    style={{marginBottom: '10px'}}
                   >
                     {isNewsletterSubmitting ? 'Subscribing...' : 'Subscribe'}
                   </button>
