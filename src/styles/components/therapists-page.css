@@ -188,12 +188,18 @@
     flex: 0 0 200px;
     position: relative;
     overflow: hidden;
+    width: 200px;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  
+
   .therapist-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
   }
   
   .not-accepting {

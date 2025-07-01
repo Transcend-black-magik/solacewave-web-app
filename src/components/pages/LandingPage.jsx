@@ -162,6 +162,90 @@ const LandingPage = () => {
           </div>
         </section>
 
+        {/* Coach in my Pocket Program */}
+        <section >
+          <div
+            style={{
+              background: 'linear-gradient(90deg, #f8fafc 0%, #e0e7ef 100%)',
+              borderRadius: '24px',
+              boxShadow: '0 8px 32px rgba(60, 80, 120, 0.10)',
+              padding: '48px 32px',
+              margin: '48px auto',
+              maxWidth: 900,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center',
+              gap: 24,
+            }}
+            className="animate-on-scroll"
+          >
+            <h2
+              style={{
+                fontSize: '2.2rem',
+                fontWeight: 700,
+                color: '#1a237e',
+                marginBottom: 8,
+                letterSpacing: '-1px',
+              }}
+            >
+              Coach in My Pocket: Therapist on the Go
+            </h2>
+            <h4
+              style={{
+                fontSize: '1.25rem',
+                color: '#374151',
+                fontWeight: 500,
+                marginBottom: 12,
+              }}
+            >
+              Skip the wait. Heal deeper, daily.
+            </h4>
+            <p
+              style={{
+                fontSize: '1.1rem',
+                color: '#374151',
+                marginBottom: 0,
+                lineHeight: 1.7,
+                maxWidth: 700,
+              }}
+            >
+              Unlike traditional therapy platforms, Solace Wave Therapy offers you more than just weekly sessions. With our <span style={{ color: '#1976d2', fontWeight: 600 }}>Coach in My Pocket</span> feature, you gain <span style={{ color: '#1976d2', fontWeight: 600 }}>daily chat access</span> to your therapist — helping you process life as it happens because therapy should not be a once a week thing.
+            </p>
+            <p
+              style={{
+                fontSize: '1.1rem',
+                color: '#374151',
+                marginBottom: 0,
+                lineHeight: 1.7,
+                maxWidth: 700,
+              }}
+            >
+              For all our customers who have an ongoing therapy plan, you can now reach your therapist during the week. Whether you got into an argument with your partner, you are dealing with stress, or you just need someone to talk to, your therapist is only a message away with our <span style={{ color: '#1976d2', fontWeight: 600 }}>Coach in my pocket</span> plan.
+            </p>
+            <button
+              onClick={handleGetStarted}
+              style={{
+                marginTop: 24,
+                padding: '14px 36px',
+                background: 'linear-gradient(90deg, #1976d2 0%, #42a5f5 100%)',
+                color: '#fff',
+                fontWeight: 600,
+                fontSize: '1.1rem',
+                border: 'none',
+                borderRadius: '8px',
+                boxShadow: '0 2px 8px rgba(25, 118, 210, 0.10)',
+                cursor: 'pointer',
+                transition: 'background 0.2s',
+              }}
+              onMouseOver={e => e.currentTarget.style.background = 'linear-gradient(90deg, #1565c0 0%, #1976d2 100%)'}
+              onMouseOut={e => e.currentTarget.style.background = 'linear-gradient(90deg, #1976d2 0%, #42a5f5 100%)'}
+            >
+              Try Coach in My Pocket
+            </button>
+          </div>
+        </section>
+
         <section id="how-it-works" ref={howItWorksRef} className="how-it-works-section interactive">
           <div className="container">
             <h2 className="section-title animate-on-scroll">How It Works</h2>
