@@ -12,6 +12,204 @@
   .services-content.loaded {
     opacity: 1;
   }
+
+
+
+/* Selected card */
+.pricing-card.selected {
+  border: 3px solid var(--primary-color);
+  box-shadow: var(--shadow-lg);
+  transform: scale(1.05);
+}
+
+/* Checkout button */
+.checkout-wrapper {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.checkout-btn {
+  background: var(--primary-color);
+  color: #fff;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.checkout-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.checkout-btn:hover:not(:disabled) {
+  background: var(--primary-dark);
+}
+
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+  align-items: center;
+}
+
+.paypal-wrapper {
+  width: 100%;
+  max-width: 300px;
+}
+
+
+.payment-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.payment-content {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+.payment-content h3 {
+  margin-bottom: 1rem;
+}
+
+.payment-content .btn {
+  display: block;
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-paypal {
+  background: #0070ba;
+  color: white;
+}
+
+.btn-paystack {
+  background: #02b1b2;
+  color: white;
+}
+
+.btn-cancel {
+  background: #ccc;
+}
+.payment-method {
+  margin: 1rem 0;
+}
+
+/* Paystack branded button */
+.btn-paystack-branded {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: #02b1b2;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  border-radius: 50px; /* pill shape like PayPal */
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-paystack-branded:hover {
+  background: #029191;
+}
+
+.paystack-logo {
+  height: 20px;
+  width: auto;
+}
+
+.btn-cancel {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: #ddd;
+  color: #333;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-cancel:hover {
+  background: #bbb;
+}
+.payment-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.payment-tab {
+  border: 2px solid transparent;
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.payment-tab:hover {
+  border-color: #ccc;
+}
+
+.payment-tab.active {
+  border-color: #0070ba; /* PayPal blue highlight */
+  background: #eef6ff;
+}
+
+.tab-logo {
+  height: 30px;
+  width: auto;
+}
+
+.payment-body {
+  margin: 1.5rem 0;
+}
+.checkout-email {
+  padding: 0.7rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-right: 1rem;
+  font-size: 1rem;
+  width: 250px;
+}
+
+.checkout-email.error {
+  border: 1px solid red;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+
   
   /* Hero Section */
   .services-hero {
@@ -346,7 +544,7 @@
 }
 
 .pricing-card.popular {
-  border: 2px solid var(--primary-color);
+  /* border: 2px solid var(--primary-color); */
   transform: scale(1.05);
   z-index: 1;
 }

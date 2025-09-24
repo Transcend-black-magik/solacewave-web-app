@@ -225,7 +225,7 @@ const ContactPage = () => {
         <section className="contact-options-section">
           <div className="container">
             <div className="contact-options-grid">
-              <div className="contact-form-container animate-on-scroll">
+              {/* <div className="contact-form-container animate-on-scroll">
                 <h2>Send Us a Message</h2>
                 
                 {submitResult && (
@@ -316,7 +316,7 @@ const ContactPage = () => {
                     )}
                   </button>
                 </form>
-              </div>
+              </div> */}
               
               <div className="contact-info-container animate-on-scroll">
                 <h2>Contact Information</h2>
@@ -342,7 +342,9 @@ const ContactPage = () => {
                     <div className="contact-details">
                       <h3>Call Us</h3>
                       <p>Customer Support:</p>
-                      <a href="tel:+2348064427513">(234) 8064427513</a>
+                      <p>Call: <a href="tel:+2347033343596">(234) 703 334 3596</a></p>
+                      <p></p>
+                      <p>WhatsApp: <a href="tel:+2347085256034">(234) 708 525 6034</a></p>
                       <p>Available Monday-Friday, 9am-6pm WAT. </p>
                       <p>Saturday & Sunday, 10am-2pm WAT. </p>
                     </div>
@@ -379,17 +381,17 @@ const ContactPage = () => {
             <div className="faq-grid animate-on-scroll">
               <div className="faq-item">
                 <h3>How quickly will I be matched with a therapist?</h3>
-                <p>Most clients are matched with a therapist immediately after completing the assessment.</p>
+                <p>Most clients are matched with a therapist immediately.</p>
               </div>
               
               <div className="faq-item">  
                 <h3>Can I change therapists if I'm not satisfied?</h3>
-                <p>Yes, you can request a new therapist at any time on the profile settings or by reaching customer service.</p>
+                <p>Yes, you can request a new therapist at any time through WhatsApp or by reaching customer service.</p>
               </div>
           
               <div className="faq-item">
                 <h3>How do I cancel my subscription?</h3>
-                <p>You can cancel your subscription anytime through your account settings page or by contacting support.</p>
+                <p>You can cancel your subscription anytime through WhatsApp or by contacting support.</p>
               </div>
             </div>
             

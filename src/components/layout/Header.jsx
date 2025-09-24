@@ -43,7 +43,10 @@ const Header = () => {
 
   // Handle Get Started button click
   const handleGetStarted = () => {
-    window.location.href = 'https://solacewave-app.web.app/';
+    // window.location.href = 'https://solacewave-app.web.app/';
+    window.location.href = 'https://wa.me/2347085256034?text=Hello%20I%20would%20like%20to%20book%20a%20therapy%20session';
+    // window.location.href = 'https://solacewave-app.web.app/'; --- IGNORE ---
+    // --- IGNORE ---
   };
   
   // Full header for all pages
@@ -105,7 +108,7 @@ const Header = () => {
                 onClick={handleGetStarted}
                 className="btn btn-primary btn-sm"
               >
-                Get Started
+                Book A Session
               </button>
             </div>
           </nav>

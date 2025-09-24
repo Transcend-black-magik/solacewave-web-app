@@ -3,9 +3,174 @@ import Header from '../layout/Header';
 import Footer from '../layout/Footer';
 import '../../styles/components/services-page.css';
 
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import PaystackButton from '../common/PaystackButton';
+
 const ServicesPage = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [activeTab, setActiveTab] = useState('individual');
+  const [selectedTherapyPlan, setSelectedTherapyPlan] = useState(null);
+  const [selectedPocketPlan, setSelectedPocketPlan] = useState(null);
+  const [showPaymentOptions, setShowPaymentOptions] = useState(false); // 👈 new state
+  const [activePayment, setActivePayment] = useState(null); 
+  const [clientEmail, setClientEmail] = useState("");
+  const isValidEmail = (email) => {
+    // Simple regex: checks for "something@something.domain"
+    return /\S+@\S+\.\S+/.test(email);
+  };
+  const [emailError, setEmailError] = useState("");
+
+  const handleCheckout = () => {
+  if (!selectedTherapyPlan && !selectedPocketPlan) {
+    setEmailError(""); // reset
+    alert("Please select a plan before proceeding.");
+    return;
+  }
+
+  if (!clientEmail.trim()) {
+    setEmailError("Email is required.");
+    return;
+  }
+
+  if (!isValidEmail(clientEmail)) {
+    setEmailError("Please enter a valid email address.");
+    return;
+  }
+
+  setEmailError(""); // ✅ clear error if valid
+
+  const checkoutData = {
+    therapy: selectedTherapyPlan,
+    pocket: selectedPocketPlan,
+    email: clientEmail,
+  };
+
+  console.log("Proceeding to checkout with:", checkoutData);
+  setShowPaymentOptions(true);
+};
+
+  // Example plan mapping to amount (you can refine this logic)
+  const planPrices = {
+    single: 20000,
+    "3sessions": 55000,
+    "6sessions": 105000,
+    pocket1: 7000,
+    pocket3: 20000,
+    pocket6: 40000,
+  };
+
+  const getTotalAmount = () => {
+    let total = 0;
+    if (selectedTherapyPlan) total += planPrices[selectedTherapyPlan] || 0;
+    if (selectedPocketPlan) total += planPrices[selectedPocketPlan] || 0;
+    return total;
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoaded(true), 500);
+    return () => clearTimeout(timer);
+  }, []);
+
+
+  const therapyPlans = [
+    {
+      id: "single",
+      name: "Single Session",
+      price: "₦20,000",
+      description: "One video or phone call session",
+      features: [
+        "One-on-one coaching",
+        "Choose phone or video",
+        "Get clarity on issues",
+        "For specific mental health challenges and goals",
+      ],
+    },
+    {
+      id: "3sessions",
+      name: "3 Sessions",
+      price: "₦55,000",
+      description: "Save ₦5,000",
+      features: [
+        "Three video or phone sessions",
+        "Ideal for short term goals",
+        "Personal growth support",
+        "Valid for flexible time frame",
+      ],
+    },
+    {
+      id: "6sessions",
+      name: "6 Sessions",
+      price: "₦105,000",
+      description: "Save ₦15,000",
+      popular: true,
+      features: [
+        "Six video or phone sessions",
+        "Long term support for deep rooted issues",
+        "Ideal for unpacking and dealing with trauma",
+        "Best for deep and lasting transformation",
+      ],
+    },
+  ];
+
+  const pocketPlans = [
+    {
+      id: "pocket1",
+      name: "Coach in My Pocket",
+      price: "₦7,000",
+      period: "/ Week",
+      note: "Requires an active therapy plan",
+      features: [
+        "Unlimited Texts/Messaging access to your personal therapist for ongoing support",
+        "Therapists are active and respond continually throughout the day",
+        "No need to wait for your next appointment. Unpack things that happen on a daily basis",
+        "Perfect for staying grounded through your week",
+        "Designed for real-life moments"
+      ],
+    },
+    {
+      id: "pocket3",
+      name: "Coach in My Pocket",
+      price: "₦20,000",
+      period: "/ 3 Weeks",
+      note: "Available only with an active therapy plan",
+      features: [
+        "Unlimited Texts/Messaging access to your personal therapist for ongoing support",
+        "Therapists are active and respond continually throughout the day",
+        "No need to wait for your next appointment. Unpack things that happen on a daily basis",
+        "Perfect for staying grounded through your week",
+        "Designed for real-life moments"
+      ],
+    },
+    {
+      id: "pocket6",
+      name: "Coach in My Pocket",
+      price: "₦40,000",
+      period: "/ 6 Weeks",
+      note: "Requires an active therapy plan",
+      features: [
+        "Unlimited Texts/Messaging access to your personal therapist for ongoing support",
+        "Therapists are active and respond continually throughout the day",
+        "No need to wait for your next appointment. Unpack things that happen on a daily basis",
+        "Perfect for staying grounded through your week",
+        "Designed for real-life moments"
+      ],
+    },
+  ];
+
+  const sendReceiptToWhatsApp = (paymentDetails) => {
+    const phoneNumber = "2347085256034"; // ✅ your WhatsApp business number
+    const amount = getTotalAmount();
+    const receiptText = `Hello, I just made a payment for my therapy plan.
+    Email: ${clientEmail}
+    Amount: ₦${amount.toLocaleString()}
+    Payment Reference: ${paymentDetails?.id || paymentDetails?.reference || "N/A"}
+      
+    Please confirm my booking.`;
+
+    const encodedText = encodeURIComponent(receiptText);
+    window.location.href = `https://wa.me/${phoneNumber}?text=${encodedText}`;
+  };
+
 
   useEffect(() => {
     // Add animation delay to simulate content loading
@@ -37,13 +202,15 @@ const ServicesPage = () => {
     };
   }, [isLoaded]);
 
+
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
 
   // Handle Get Started button click
   const handleGetStarted = () => {
-    window.location.href = 'https://solacewave-app.web.app/';
+    // window.location.href = 'https://solacewave-app.web.app/';
+    window.location.href = 'https://wa.me/2347085256034?text=Hello%20I%20would%20like%20to%20book%20a%20therapy%20session';
   };
 
   return (
@@ -59,6 +226,192 @@ const ServicesPage = () => {
             </div>
           </div>
         </section>
+
+        <section className="plans-section">
+          <div className="container">
+            <h2 className="section-title">Choose Your Plan</h2>
+
+            {/* Therapy Packages */}
+            <h3 className="category-title">Therapy Packages</h3>
+            <div className="pricing-grid">
+              {therapyPlans.map((plan) => (
+                <div
+                  key={plan.id}
+                  className={`pricing-card ${
+                    selectedTherapyPlan === plan.id ? "selected" : ""
+                  }`}
+                  onClick={() => setSelectedTherapyPlan(plan.id)}
+                >
+                  <div className="pricing-header">
+                    <h3>{plan.name}</h3>
+                    <div className="price">
+                      <span className="amount">{plan.price}</span>
+                    </div>
+                  </div>
+                  <div className="pricing-features">
+                    <ul>
+                      {plan.features.map((f, i) => (
+                        <li key={i}>
+                          <i className="fas fa-check"></i> {f}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Coach in My Pocket */}
+            <h3 className="category-title">Coach in My Pocket</h3>
+            <div className="pricing-grid">
+              {pocketPlans.map((plan) => (
+                <div
+                  key={plan.id}
+                  className={`pricing-card ${
+                    selectedPocketPlan === plan.id ? "selected" : ""
+                  }`}
+                  onClick={() => setSelectedPocketPlan(plan.id)}
+                >
+                  <div className="pricing-header">
+                    <h3>{plan.name}</h3>
+                    <div className="price">
+                      <span className="amount">{plan.price}</span>
+                    </div>
+                  </div>
+                  <div className="pricing-features">
+                    <ul>
+                      {plan.features.map((f, i) => (
+                        <li key={i}>
+                          <i className="fas fa-check"></i> {f}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Checkout Button */}
+            <div className="checkout-wrapper">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                value={clientEmail}
+                onChange={(e) => {
+                  setClientEmail(e.target.value);
+                  setEmailError(""); // clear error while typing
+                }}
+                className={`checkout-email ${emailError ? "error" : ""}`}
+                required
+              />
+              {emailError && <p className="error-message">{emailError}</p>}  {/* ✅ inline error */}
+
+              <button
+                className="checkout-btn"
+                onClick={handleCheckout}
+                disabled={
+                  (!selectedTherapyPlan && !selectedPocketPlan) ||
+                  !clientEmail.trim() ||
+                  !isValidEmail(clientEmail)
+                }
+              >
+                Checkout
+              </button>
+            </div>
+
+            {/* Payment Options Modal */}
+            {showPaymentOptions && (
+              <div className="payment-modal">
+                <div className="payment-content">
+                  <h3>Select Payment Method</h3>
+
+                  {/* Tabs */}
+                  <div className="payment-tabs">
+                    <button
+                      className={`payment-tab ${activePayment === "paypal" ? "active" : ""}`}
+                      onClick={() => setActivePayment("paypal")}
+                    >
+                      <img
+                        src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_111x69.jpg"
+                        alt="PayPal"
+                        className="tab-logo"
+                      />
+                    </button>
+                    <button
+                      className={`payment-tab ${activePayment === "paystack" ? "active" : ""}`}
+                      onClick={() => setActivePayment("paystack")}
+                    >
+                      <img
+                        src="https://assets.paystack.com/assets/img/hero/Paystack-mark-white-twitter.png"
+                        alt="Paystack"
+                        className="tab-logo"
+                      />
+                    </button>
+                  </div>
+
+                  {/* Tab Content */}
+                  <div className="payment-body">
+                    {activePayment === "paypal" && (
+                      <PayPalScriptProvider options={{ "client-id": "test" /* replace with real */ }}>
+                        <PayPalButtons
+                          style={{ layout: "vertical", height: 45 }}
+                          createOrder={(data, actions) => {
+                            return actions.order.create({
+                              purchase_units: [
+                                {
+                                  amount: {
+                                    value: (getTotalAmount() / 1600).toFixed(2), // NGN→USD conversion
+                                  },
+                                },
+                              ],
+                              payer: {
+                                email_address: clientEmail || undefined, // ✅ dynamic email
+                              },
+                            });
+                          }}
+                          onApprove={async (data, actions) => {
+                            const details = await actions.order.capture();
+                            console.log("PayPal Payment Success:", details);
+                            alert("Payment successful with PayPal!");
+                            setShowPaymentOptions(false);
+
+                            // ✅ Send WhatsApp receipt
+                            sendReceiptToWhatsApp(details);
+                          }}
+                        />
+                      </PayPalScriptProvider>
+                    )}
+
+                    {activePayment === "paystack" && (
+                      <PaystackButton
+                        email={clientEmail}
+                        amount={getTotalAmount()}
+                        publicKey="pk_test_8d5aa6cbe0649d73d2605b70a00324b39fab427b"
+                        onSuccess={(ref) => {
+                          console.log("Paystack success:", ref);
+                          alert("Payment successful with Paystack!");
+                          setShowPaymentOptions(false);
+
+                          // ✅ Send WhatsApp receipt
+                          sendReceiptToWhatsApp(ref);
+                        }}
+                        onClose={() => alert("Payment closed")}
+                      />
+                    )}
+                  </div>
+
+                  {/* Cancel Button */}
+                  <button className="btn-cancel" onClick={() => setShowPaymentOptions(false)}>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+
+          </div>
+        </section>
+
+        
         
         <section className="therapy-types-section">
           <div className="container">
@@ -201,155 +554,6 @@ const ServicesPage = () => {
           </div>
         </section>
         
-        <section className="pricing-section">
-          <div className="container">
-            <h2 className="section-title animate-on-scroll">Affordable Therapy Packages</h2>
-            <p className="section-subtitle animate-on-scroll">Flexible pricing with real value. No hidden fees.</p>
-
-            <div className="pricing-grid animate-on-scroll">
-              {/* Single Session Plan */}
-              <div className="pricing-card">
-                <div className="pricing-header">
-                  <h3>Single Session</h3>
-                  <div className="price">
-                    <span className="amount">₦20,000</span>
-                  </div>
-                  <p>One video or phone call session</p>
-                </div>
-                <div className="pricing-features">
-                  <ul>
-                    <li><i className="fas fa-check"></i> One-on-one coaching</li>
-                    <li><i className="fas fa-check"></i> Choose phone or video</li>
-                    <li><i className="fas fa-check"></i> Get clarity on issues</li>
-                    <li><i className="fas fa-check"></i> For specific mental health challenges and goals</li>
-                  </ul>
-                </div>
-                <div className="pricing-action">
-                  <button onClick={handleGetStarted} className="btn btn-outline btn-block">Get Started</button>
-                </div>
-              </div>
-
-              {/* 3 Sessions Plan */}
-              <div className="pricing-card">
-                <div className="pricing-header">
-                  <h3>3 Sessions</h3>
-                  <div className="price">
-                    <span className="amount">₦55,000</span>
-                    <span className="period">/ month</span>
-                  </div>
-                  <p>Save ₦5,000</p>
-                </div>
-                <div className="pricing-features">
-                  <ul>
-                    <li><i className="fas fa-check"></i> Three video or phone sessions</li>
-                    <li><i className="fas fa-check"></i> Ideal for short term goals</li>
-                    <li><i className="fas fa-check"></i> Personal growth support</li>
-                    <li><i className="fas fa-check"></i> Valid for flexible time frame</li>
-                  </ul>
-                </div>
-                <div className="pricing-action">
-                  <button onClick={handleGetStarted} className="btn btn-outline btn-block">Get Started</button>
-                </div>
-              </div>
-
-              {/* 6 Sessions Plan - Popular */}
-              <div className="pricing-card popular">
-                <div className="popular-tag">Best Value</div>
-                <div className="pricing-header">
-                  <h3>6 Sessions</h3>
-                  <div className="price">
-                    <span className="amount">₦105,000</span>
-                    <span className="period">/ month</span>
-                  </div>
-                  <p>Save ₦15,000</p>
-                </div>
-                <div className="pricing-features">
-                  <ul>
-                    <li><i className="fas fa-check"></i> Six video or phone sessions</li>
-                    <li><i className="fas fa-check"></i> Long term support for deep rooted issues</li>
-                    <li><i className="fas fa-check"></i> Ideal for unpacking and dealing with trauma</li>
-                    <li><i className="fas fa-check"></i> Best for deep and lasting transformation</li>
-                  </ul>
-                </div>
-                <div className="pricing-action">
-                  <button onClick={handleGetStarted} className="btn btn-primary btn-block">Get Started</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="coach-pocket-section">
-          <div className="container">
-            <h2 className="section-title animate-on-scroll">Coach in My Pocket</h2>
-            <p className="section-subtitle animate-on-scroll">Skip the wait! Get daily access to your personal therapist</p>
-            <p className="pocket-description animate-on-scroll">Had a fight with your partner today? Had a hard day at school or work? Got triggered today? 
-              Unlike other platforms, we offer consistent access to your therapist throughout the day. Because therapy should not just be a 
-              once-a-week thing!</p>
-
-            <div className="pricing-grid animate-on-scroll">
-              {/* Weekly Plan */}
-              <div className="pricing-card">
-                <div className="pricing-header">
-                  <h3>Coach in My Pocket</h3>
-                  <div className="price">
-                    <span className="amount">₦5,000</span>
-                    <span className="period">/ week</span>
-                  </div>
-                </div>
-                <div className="pricing-features">
-                  <ul>
-                    <li><i className="fas fa-check"></i> Extra support for active therapy clients</li>
-                    <li><i className="fas fa-check"></i> Unlimited messaging access to your personal therapist for ongoing support</li>
-                    <li><i className="fas fa-check"></i> Therapists are active and respond continually throughout the day</li>
-                    <li><i className="fas fa-check"></i> No need to wait for your next appointment. Unpack things that happen on a daily basis</li>
-                    <li><i className="fas fa-check"></i> Texts and check-ins anytime, anywhere</li>
-                    <li><i className="fas fa-check"></i> Get support in real time between your main weekly sessions</li>
-                    <li><i className="fas fa-check"></i> Perfect for staying grounded through your week</li>
-                    <li><i className="fas fa-check"></i> Designed for real-life moments</li>
-                    <li><i className="fas fa-check"></i> Transformation is not just a once-a-week thing! Skip the wait</li>
-                  </ul>
-                </div>
-                <div className="pricing-note">
-                  <p>Requires an active therapy plan</p>
-                </div>
-                <div className="pricing-action">
-                  <button onClick={handleGetStarted} className="btn btn-outline btn-block">Get Started</button>
-                </div>
-              </div>
-
-              {/* Monthly Plan */}
-              <div className="pricing-card">
-                <div className="pricing-header">
-                  <h3>Coach in My Pocket</h3>
-                  <div className="price">
-                    <span className="amount">₦18,000</span>
-                    <span className="period">/ month</span>
-                  </div>
-                </div>
-                <div className="pricing-features">
-                  <ul>
-                    <li><i className="fas fa-check"></i> Extra support for active therapy clients</li>
-                    <li><i className="fas fa-check"></i> Message your therapist as life happens</li>
-                    <li><i className="fas fa-check"></i> Therapists are active and respond continually throughout the day</li>
-                    <li><i className="fas fa-check"></i> No need to wait for your next appointment. Unpack things that happen on a daily basis</li>
-                    <li><i className="fas fa-check"></i> Texts and check-ins to maintain your mental clarity</li>
-                    <li><i className="fas fa-check"></i> Consistent support that strengthens your transformation</li>
-                    <li><i className="fas fa-check"></i> Ideal for clients doing deep emotional or personal growth work</li>
-                    <li><i className="fas fa-check"></i> A powerful extension of your 1-on-1 therapy</li>
-                    <li><i className="fas fa-check"></i> Transformation is not just a once-a-week thing! Skip the wait</li>
-                  </ul>
-                </div>
-                <div className="pricing-note">
-                  <p>Available only with an active therapy plan</p>
-                </div>
-                <div className="pricing-action">
-                  <button onClick={handleGetStarted} className="btn btn-outline btn-block">Get Started</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
         
         <section className="approaches-section">
           <div className="container">
