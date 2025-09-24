@@ -117,7 +117,7 @@ const ServicesPage = () => {
       id: "pocket1",
       name: "Coach in My Pocket",
       price: "₦7,000",
-      period: "/ Week",
+      period: " / Week",
       note: "Requires an active therapy plan",
       features: [
         "Unlimited Texts/Messaging access to your personal therapist for ongoing support",
@@ -131,7 +131,7 @@ const ServicesPage = () => {
       id: "pocket3",
       name: "Coach in My Pocket",
       price: "₦20,000",
-      period: "/ 3 Weeks",
+      period: " /3 Weeks",
       note: "Available only with an active therapy plan",
       features: [
         "Unlimited Texts/Messaging access to your personal therapist for ongoing support",
@@ -145,7 +145,7 @@ const ServicesPage = () => {
       id: "pocket6",
       name: "Coach in My Pocket",
       price: "₦40,000",
-      period: "/ 6 Weeks",
+      period: " /6 Weeks",
       note: "Requires an active therapy plan",
       features: [
         "Unlimited Texts/Messaging access to your personal therapist for ongoing support",
@@ -276,6 +276,7 @@ const ServicesPage = () => {
                     <h3>{plan.name}</h3>
                     <div className="price">
                       <span className="amount">{plan.price}</span>
+                      <span >{plan.period}</span>
                     </div>
                   </div>
                   <div className="pricing-features">
@@ -352,7 +353,7 @@ const ServicesPage = () => {
                   {/* Tab Content */}
                   <div className="payment-body">
                     {activePayment === "paypal" && (
-                      <PayPalScriptProvider options={{ "client-id": "test" /* replace with real */ }}>
+                      <PayPalScriptProvider options={{ "client-id": "AQ0P0dlrncuplv-QNWsTfofbtQ6yV_ZnEt0hhYKRatOj6ndpGZDMmMSlZ4TPS2X08TKgZfi_YFiRrtzT" /* replace with real */ }}>
                         <PayPalButtons
                           style={{ layout: "vertical", height: 45 }}
                           createOrder={(data, actions) => {
@@ -386,7 +387,7 @@ const ServicesPage = () => {
                       <PaystackButton
                         email={clientEmail}
                         amount={getTotalAmount()}
-                        publicKey="pk_test_8d5aa6cbe0649d73d2605b70a00324b39fab427b"
+                        publicKey="pk_live_34b73780854135828702b448cae62e1bdb0f98b8"//"pk_test_8d5aa6cbe0649d73d2605b70a00324b39fab427b"
                         onSuccess={(ref) => {
                           console.log("Paystack success:", ref);
                           alert("Payment successful with Paystack!");
