@@ -278,7 +278,7 @@ exports.submitContactForm = onRequest(
               <h3 style="color: #87431D; margin-top: 0;">Need Immediate Support?</h3>
               <p style="margin-bottom: 10px; color: #555;">If you're experiencing a mental health crisis:</p>
               <ul style="color: #555; line-height: 1.6;">
-                <li>Call our support line: <strong>(234) 8064427513</strong></li>
+                <li>Call our support line: <strong>(234) 7033343596</strong></li>
                 <li>Visit your local emergency room</li>
                 <li>Contact emergency services: <strong>199 or 911</strong></li>
               </ul>
