@@ -337,6 +337,7 @@
   box-shadow: var(--shadow-md);
   transition: transform var(--transition-normal) ease;
   position: relative;
+  margin-bottom: 2rem;
 }
 
 .pricing-card:hover {
@@ -522,6 +523,7 @@
   justify-content: center;
   gap: 1rem;
   margin: 1rem 0;
+  flex-direction: column;
 }
 
 .payment-tab {
@@ -531,6 +533,10 @@
   padding: 0.5rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  text-align: center;
+}
+.payment-tap-button{
+  font-size: 14px;
 }
 
 .payment-tab:hover {
@@ -633,6 +639,12 @@
   color: var(--text-medium);
   font-size: var(--font-size-sm);
 }
+.pricing-card.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  filter: grayscale(80%);
+}
+
 
 .insurance-notice {
   margin-top: var(--spacing-2xl);

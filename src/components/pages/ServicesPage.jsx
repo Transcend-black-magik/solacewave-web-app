@@ -14,40 +14,59 @@ const ServicesPage = () => {
   const [showPaymentOptions, setShowPaymentOptions] = useState(false); // 👈 new state
   const [activePayment, setActivePayment] = useState(null); 
   const [clientEmail, setClientEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+
+   // ✅ Allowed pocket plans mapped outside
+  const allowedPocketPlans = {
+    single: ["pocket1"],
+    "3sessions": ["pocket1", "pocket3"],
+    "6sessions": ["pocket1", "pocket3", "pocket6"],
+  };
+
   const isValidEmail = (email) => {
     // Simple regex: checks for "something@something.domain"
     return /\S+@\S+\.\S+/.test(email);
   };
-  const [emailError, setEmailError] = useState("");
+
+  // Reset pocket plan if therapy plan changes and invalid
+  useEffect(() => {
+    if (
+      selectedTherapyPlan &&
+      selectedPocketPlan &&
+      !allowedPocketPlans[selectedTherapyPlan]?.includes(selectedPocketPlan)
+    ) {
+      setSelectedPocketPlan(null);
+    }
+  }, [selectedTherapyPlan, selectedPocketPlan]);
 
   const handleCheckout = () => {
-  if (!selectedTherapyPlan || !selectedPocketPlan) {
-    setEmailError(""); // reset
-    alert("Please select a plan before proceeding.");
-    return;
-  }
+    if (!selectedTherapyPlan || !selectedPocketPlan) {
+      setEmailError(""); // reset
+      alert("Please select a plan before proceeding.");
+      return;
+    }
+  
+    if (!clientEmail.trim()) {
+      setEmailError("Email is required.");
+      return;
+    }
 
-  if (!clientEmail.trim()) {
-    setEmailError("Email is required.");
-    return;
-  }
+    if (!isValidEmail(clientEmail)) {
+      setEmailError("Please enter a valid email address.");
+      return;
+    }
 
-  if (!isValidEmail(clientEmail)) {
-    setEmailError("Please enter a valid email address.");
-    return;
-  }
+    setEmailError(""); // ✅ clear error if valid
 
-  setEmailError(""); // ✅ clear error if valid
+    const checkoutData = {
+      therapy: selectedTherapyPlan,
+      pocket: selectedPocketPlan,
+      email: clientEmail,
+    };
 
-  const checkoutData = {
-    therapy: selectedTherapyPlan,
-    pocket: selectedPocketPlan,
-    email: clientEmail,
+    console.log("Proceeding to checkout with:", checkoutData);
+    setShowPaymentOptions(true);
   };
-
-  console.log("Proceeding to checkout with:", checkoutData);
-  setShowPaymentOptions(true);
-};
 
   // Example plan mapping to amount (you can refine this logic)
   const planPrices = {
@@ -66,10 +85,39 @@ const ServicesPage = () => {
     return total;
   };
 
+  // Animation / content loaded
   useEffect(() => {
     const timer = setTimeout(() => setIsLoaded(true), 500);
     return () => clearTimeout(timer);
   }, []);
+
+  // intersection observer for scroll animations
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+        }
+      });
+    }, { threshold: 0.1 });
+    
+    document.querySelectorAll('.animate-on-scroll').forEach(el => {
+      observer.observe(el);
+    });
+    
+    return () => {
+      document.querySelectorAll('.animate-on-scroll').forEach(el => {
+        observer.unobserve(el);
+      });
+    };
+  }, [isLoaded]);
+
+  // Handle Pocket plan click: disable unallowed plans
+  const handlePocketClick = (planId) => {
+    if (!selectedTherapyPlan) return; // cannot select without therapy
+    if (!allowedPocketPlans[selectedTherapyPlan]?.includes(planId)) return; // disallow invalid
+    setSelectedPocketPlan(planId);
+  };
 
 
   const therapyPlans = [
@@ -181,28 +229,7 @@ const ServicesPage = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Set up intersection observer for scroll animations
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in-view');
-        }
-      });
-    }, { threshold: 0.1 });
-    
-    document.querySelectorAll('.animate-on-scroll').forEach(el => {
-      observer.observe(el);
-    });
-    
-    return () => {
-      document.querySelectorAll('.animate-on-scroll').forEach(el => {
-        observer.unobserve(el);
-      });
-    };
-  }, [isLoaded]);
-
-
+  // Handle tab change
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
@@ -245,8 +272,10 @@ const ServicesPage = () => {
                   <div className="pricing-header">
                     <h3>{plan.name}</h3>
                     <div className="price">
-                      <span className="amount">{plan.price}</span>
+                      <span className="amount">{plan.price}</span> <br/>
+                      <span className="description">{plan.description}</span>
                     </div>
+                    
                   </div>
                   <div className="pricing-features">
                     <ul>
@@ -262,35 +291,38 @@ const ServicesPage = () => {
             </div>
 
             {/* Coach in My Pocket */}
+            {/* Pocket Plans */}
             <h3 className="category-title">Coach in My Pocket</h3>
+            <span>Daily text messaging with your therapist(only activated with ongoing therapy sessions)</span>
             <div className="pricing-grid">
-              {pocketPlans.map((plan) => (
-                <div
-                  key={plan.id}
-                  className={`pricing-card ${
-                    selectedPocketPlan === plan.id ? "selected" : ""
-                  }`}
-                  onClick={() => setSelectedPocketPlan(plan.id)}
-                >
-                  <div className="pricing-header">
-                    <h3>{plan.name}</h3>
-                    <div className="price">
-                      <span className="amount">{plan.price}</span>
-                      <span >{plan.period}</span>
+              {pocketPlans.map(plan => {
+                const isAllowed = selectedTherapyPlan && allowedPocketPlans[selectedTherapyPlan]?.includes(plan.id);
+                return (
+                  <div
+                    key={plan.id}
+                    className={`pricing-card ${selectedPocketPlan === plan.id ? "selected" : ""} ${!isAllowed ? "disabled" : ""}`}
+                    onClick={() => handlePocketClick(plan.id)}
+                  >
+                    <div className="pricing-header">
+                      <h3>{plan.name}</h3>
+                      <div className="price">
+                        <span className="amount">{plan.price}</span>
+                        <span>{plan.period}</span><br/>
+                        <span className="note">{plan.note}</span>
+                      </div>
+                    </div>
+                    <div className="pricing-features">
+                      <ul>
+                        {plan.features.map((f, i) => (
+                          <li key={i}><i className="fas fa-check"></i> {f}</li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
-                  <div className="pricing-features">
-                    <ul>
-                      {plan.features.map((f, i) => (
-                        <li key={i}>
-                          <i className="fas fa-check"></i> {f}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
+
 
             {/* Checkout Button */}
             <div className="checkout-wrapper">
@@ -338,7 +370,7 @@ const ServicesPage = () => {
                         alt="PayPal"
                         className="tab-logo"
                       />
-                      <span>Pay CAD USD EUR with PayPal</span>
+                       <div><span className='payment-tap-button'>Pay CAD USD EUR with PayPal</span></div>
                     </button>
                     <button
                       className={`payment-tab ${activePayment === "paystack" ? "active" : ""}`}
@@ -349,7 +381,8 @@ const ServicesPage = () => {
                         alt="Paystack"
                         className="tab-logo"
                       />
-                      <span>Pay NGN with Paystack</span>
+                      <div><span className='payment-tap-button'>Pay NGN with Paystack</span></div>
+                      
                     </button>
                   </div>
 
