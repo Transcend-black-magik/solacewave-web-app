@@ -21,7 +21,7 @@ const ServicesPage = () => {
   const [emailError, setEmailError] = useState("");
 
   const handleCheckout = () => {
-  if (!selectedTherapyPlan && !selectedPocketPlan) {
+  if (!selectedTherapyPlan || !selectedPocketPlan) {
     setEmailError(""); // reset
     alert("Please select a plan before proceeding.");
     return;
@@ -311,10 +311,11 @@ const ServicesPage = () => {
                 className="checkout-btn"
                 onClick={handleCheckout}
                 disabled={
-                  (!selectedTherapyPlan && !selectedPocketPlan) ||
+                  !selectedTherapyPlan || // must have therapy
+                  !selectedPocketPlan ||  // must have pocket
                   !clientEmail.trim() ||
                   !isValidEmail(clientEmail)
-                }
+              }
               >
                 Checkout
               </button>
@@ -337,6 +338,7 @@ const ServicesPage = () => {
                         alt="PayPal"
                         className="tab-logo"
                       />
+                      <span>Pay CAD USD EUR with PayPal</span>
                     </button>
                     <button
                       className={`payment-tab ${activePayment === "paystack" ? "active" : ""}`}
@@ -347,6 +349,7 @@ const ServicesPage = () => {
                         alt="Paystack"
                         className="tab-logo"
                       />
+                      <span>Pay NGN with Paystack</span>
                     </button>
                   </div>
 

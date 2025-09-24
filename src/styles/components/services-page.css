@@ -1,513 +1,65 @@
-/* Services page styles */
+/* -------------------------------
+   Base Styles
+--------------------------------*/
 .services-page {
-    position: relative;
-    overflow-x: hidden;
-  }
-  
-  .services-content {
-    opacity: 0;
-    transition: opacity var(--transition-normal) ease-in-out;
-  }
-  
-  .services-content.loaded {
-    opacity: 1;
-  }
-
-
-
-/* Selected card */
-.pricing-card.selected {
-  border: 3px solid var(--primary-color);
-  box-shadow: var(--shadow-lg);
-  transform: scale(1.05);
+  position: relative;
+  overflow-x: hidden;
 }
 
-/* Checkout button */
-.checkout-wrapper {
+.services-content {
+  opacity: 0;
+  transition: opacity var(--transition-normal) ease-in-out;
+}
+
+.services-content.loaded {
+  opacity: 1;
+}
+
+/* -------------------------------
+   Hero Section
+--------------------------------*/
+.services-hero {
+  background-color: var(--primary-bg);
+  padding: var(--spacing-3xl) 0;
   text-align: center;
-  margin-top: 2rem;
+  position: relative;
+  overflow: hidden;
 }
 
-.checkout-btn {
-  background: var(--primary-color);
-  color: #fff;
-  padding: 1rem 2rem;
-  font-size: 1.2rem;
-  border: none;
-  border-radius: var(--border-radius-md);
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.checkout-btn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
-
-.checkout-btn:hover:not(:disabled) {
-  background: var(--primary-dark);
-}
-
-.payment-options {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-top: 1rem;
-  align-items: center;
-}
-
-.paypal-wrapper {
-  width: 100%;
-  max-width: 300px;
-}
-
-
-.payment-modal {
-  position: fixed;
+.services-hero::before {
+  content: '';
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
+  background: radial-gradient(circle at center, rgba(255,255,255,0) 0%, var(--primary-bg) 70%);
+  z-index: 1;
 }
 
-.payment-content {
-  background: #fff;
-  padding: 2rem;
-  border-radius: 12px;
-  text-align: center;
-  max-width: 400px;
-  width: 100%;
+.services-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+  padding-top: var(--spacing-xl);
 }
 
-.payment-content h3 {
-  margin-bottom: 1rem;
+.services-hero h1 {
+  font-size: var(--font-size-5xl);
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-md);
 }
 
-.payment-content .btn {
-  display: block;
-  width: 100%;
-  margin: 0.5rem 0;
-  padding: 0.8rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+.services-hero .subtitle {
+  font-size: var(--font-size-xl);
+  color: var(--text-medium);
+  margin-bottom: 0;
 }
 
-.btn-paypal {
-  background: #0070ba;
-  color: white;
-}
-
-.btn-paystack {
-  background: #02b1b2;
-  color: white;
-}
-
-.btn-cancel {
-  background: #ccc;
-}
-.payment-method {
-  margin: 1rem 0;
-}
-
-/* Paystack branded button */
-.btn-paystack-branded {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  width: 100%;
-  padding: 0.8rem 1rem;
-  background: #02b1b2;
-  color: white;
-  font-weight: 600;
-  font-size: 1rem;
-  border: none;
-  border-radius: 50px; /* pill shape like PayPal */
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.btn-paystack-branded:hover {
-  background: #029191;
-}
-
-.paystack-logo {
-  height: 20px;
-  width: auto;
-}
-
-.btn-cancel {
-  margin-top: 1rem;
-  width: 100%;
-  padding: 0.7rem 1rem;
-  border-radius: 8px;
-  border: none;
-  background: #ddd;
-  color: #333;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.btn-cancel:hover {
-  background: #bbb;
-}
-.payment-tabs {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin: 1rem 0;
-}
-
-.payment-tab {
-  border: 2px solid transparent;
-  background: #f9f9f9;
-  border-radius: 10px;
-  padding: 0.5rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.payment-tab:hover {
-  border-color: #ccc;
-}
-
-.payment-tab.active {
-  border-color: #0070ba; /* PayPal blue highlight */
-  background: #eef6ff;
-}
-
-.tab-logo {
-  height: 30px;
-  width: auto;
-}
-
-.payment-body {
-  margin: 1.5rem 0;
-}
-.checkout-email {
-  padding: 0.7rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  margin-right: 1rem;
-  font-size: 1rem;
-  width: 250px;
-}
-
-.checkout-email.error {
-  border: 1px solid red;
-}
-
-.error-message {
-  color: red;
-  font-size: 0.9rem;
-  margin-top: 4px;
-}
-
-
-  
-  /* Hero Section */
-  .services-hero {
-    background-color: var(--primary-bg);
-    padding: var(--spacing-3xl) 0;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .services-hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at center, rgba(255,255,255,0) 0%, var(--primary-bg) 70%);
-    z-index: 1;
-  }
-  
-  .services-hero-content {
-    position: relative;
-    z-index: 2;
-    max-width: 800px;
-    margin: 0 auto;
-    padding-top: var(--spacing-xl);
-  }
-  
-  .services-hero h1 {
-    font-size: var(--font-size-5xl);
-    color: var(--primary-color);
-    margin-bottom: var(--spacing-md);
-  }
-  
-  .services-hero .subtitle {
-    font-size: var(--font-size-xl);
-    color: var(--text-medium);
-    margin-bottom: 0;
-  }
-  
-  /* Section Styles */
-  .section-title {
-    text-align: center;
-    margin-bottom: var(--spacing-md);
-    color: var(--primary-color);
-    font-size: var(--font-size-3xl);
-  }
-  
-  .section-subtitle {
-    text-align: center;
-    max-width: 800px;
-    margin: 0 auto var(--spacing-xl);
-    color: var(--text-medium);
-    font-size: var(--font-size-lg);
-  }
-  
-  /* Therapy Types Section */
-  .therapy-types-section {
-    padding: var(--spacing-3xl) 0;
-    background-color: white;
-  }
-  
-  .therapy-tabs {
-    display: flex;
-    justify-content: center;
-    gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-xl);
-    flex-wrap: wrap;
-  }
-  
-  .tab-button {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: var(--spacing-md);
-    background: var(--background-light);
-    border: 2px solid transparent;
-    border-radius: var(--border-radius-md);
-    cursor: pointer;
-    transition: all var(--transition-normal) ease;
-    min-width: 150px;
-  }
-  
-  .tab-button i {
-    font-size: var(--font-size-2xl);
-    margin-bottom: var(--spacing-sm);
-    color: var(--primary-color);
-  }
-  
-  .tab-button span {
-    font-weight: 500;
-  }
-  
-  .tab-button:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-sm);
-  }
-  
-  .tab-button.active {
-    background-color: var(--primary-bg);
-    border-color: var(--primary-color);
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-md);
-  }
-  
-  .therapy-content {
-    background-color: white;
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-md);
-    overflow: hidden;
-  }
-  
-  .therapy-type-content {
-    display: flex;
-    animation: fadeIn 0.5s ease-in-out forwards;
-  }
-  
-  .therapy-image {
-    flex: 0 0 40%;
-  }
-  
-  .therapy-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-  
-  .therapy-details {
-    flex: 1;
-    padding: var(--spacing-xl);
-  }
-  
-  .therapy-details h3 {
-    color: var(--primary-color);
-    margin-bottom: var(--spacing-md);
-    font-size: var(--font-size-2xl);
-  }
-  
-  .therapy-details p {
-    margin-bottom: var(--spacing-md);
-    color: var(--text-medium);
-    line-height: 1.6;
-  }
-  
-  .therapy-details h4 {
-    margin-bottom: var(--spacing-sm);
-    color: var(--text-dark);
-  }
-  
-  .therapy-areas {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-lg);
-  }
-  
-  .therapy-areas li {
-    display: flex;
-    align-items: flex-start;
-  }
-  
-  .therapy-areas li i {
-    color: var(--primary-color);
-    margin-right: var(--spacing-sm);
-    margin-top: 4px;
-  }
-  
-  .therapy-cta {
-    display: flex;
-    gap: var(--spacing-md);
-  }
-  
-  /* Approaches Section */
-  .approaches-section {
-    padding: var(--spacing-3xl) 0;
-    background-color: var(--background-light);
-  }
-  
-  .approaches-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--spacing-lg);
-    margin-top: var(--spacing-xl);
-  }
-  
-  .approach-card {
-    background-color: white;
-    border-radius: var(--border-radius-md);
-    padding: var(--spacing-lg);
-    box-shadow: var(--shadow-sm);
-    transition: transform var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
-  }
-  
-  .approach-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-md);
-  }
-  
-  .approach-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: var(--primary-bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: var(--spacing-md);
-    font-size: var(--font-size-xl);
-    color: var(--primary-color);
-  }
-  
-  .approach-card h3 {
-    color: var(--primary-dark);
-    margin-bottom: var(--spacing-sm);
-    font-size: var(--font-size-lg);
-  }
-  
-  .approach-card p {
-    color: var(--text-medium);
-    font-size: var(--font-size-md);
-    line-height: 1.5;
-  }
-  
-  /* Communication Options Section */
-  .communication-options-section {
-    padding: var(--spacing-3xl) 0;
-    background-color: white;
-  }
-  
-  .options-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--spacing-xl);
-    margin-top: var(--spacing-xl);
-  }
-  
-  .option-card {
-    border: 2px solid var(--background-light);
-    border-radius: var(--border-radius-md);
-    padding: var(--spacing-xl);
-    transition: transform var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
-  }
-  
-  .option-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--primary-color);
-    box-shadow: var(--shadow-md);
-  }
-  
-  .option-icon {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    background-color: var(--primary-bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: var(--spacing-md);
-    font-size: var(--font-size-2xl);
-    color: var(--primary-color);
-  }
-  
-  .option-card h3 {
-    margin-bottom: var(--spacing-sm);
-    color: var(--primary-dark);
-  }
-  
-  .option-card p {
-    margin-bottom: var(--spacing-md);
-    color: var(--text-medium);
-  }
-  
-  .option-features {
-    margin-top: var(--spacing-md);
-  }
-  
-  .option-features li {
-    display: flex;
-    align-items: center;
-    margin-bottom: var(--spacing-sm);
-    color: var(--text-medium);
-  }
-  
-  .option-features li i {
-    color: var(--primary-color);
-    margin-right: var(--spacing-sm);
-    font-size: var(--font-size-sm);
-  }
-  
-  /* Pricing Section */
- /* Pricing Section */
-.pricing-section {
-  padding: var(--spacing-3xl) 0;
-  background-color: var(--primary-bg);
-}
-
+/* -------------------------------
+   Section Titles
+--------------------------------*/
 .section-title {
   text-align: center;
   margin-bottom: var(--spacing-md);
@@ -521,6 +73,254 @@
   margin: 0 auto var(--spacing-xl);
   color: var(--text-medium);
   font-size: var(--font-size-lg);
+}
+
+/* -------------------------------
+   Therapy Types Section
+--------------------------------*/
+.therapy-types-section {
+  padding: var(--spacing-3xl) 0;
+  background-color: white;
+}
+
+.therapy-tabs {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xl);
+  flex-wrap: wrap;
+}
+
+.tab-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-md);
+  background: var(--background-light);
+  border: 2px solid transparent;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all var(--transition-normal) ease;
+  min-width: 150px;
+}
+
+.tab-button i {
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--spacing-sm);
+  color: var(--primary-color);
+}
+
+.tab-button span {
+  font-weight: 500;
+}
+
+.tab-button:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-sm);
+}
+
+.tab-button.active {
+  background-color: var(--primary-bg);
+  border-color: var(--primary-color);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.therapy-content {
+  background-color: white;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.therapy-type-content {
+  display: flex;
+  animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+.therapy-image {
+  flex: 0 0 40%;
+}
+
+.therapy-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.therapy-details {
+  flex: 1;
+  padding: var(--spacing-xl);
+}
+
+.therapy-details h3 {
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-2xl);
+}
+
+.therapy-details p {
+  margin-bottom: var(--spacing-md);
+  color: var(--text-medium);
+  line-height: 1.6;
+}
+
+.therapy-details h4 {
+  margin-bottom: var(--spacing-sm);
+  color: var(--text-dark);
+}
+
+.therapy-areas {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.therapy-areas li {
+  display: flex;
+  align-items: flex-start;
+}
+
+.therapy-areas li i {
+  color: var(--primary-color);
+  margin-right: var(--spacing-sm);
+  margin-top: 4px;
+}
+
+.therapy-cta {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+/* -------------------------------
+   Approaches Section
+--------------------------------*/
+.approaches-section {
+  padding: var(--spacing-3xl) 0;
+  background-color: var(--background-light);
+}
+
+.approaches-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-xl);
+}
+
+.approach-card {
+  background-color: white;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
+}
+
+.approach-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.approach-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--primary-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-xl);
+  color: var(--primary-color);
+}
+
+.approach-card h3 {
+  color: var(--primary-dark);
+  margin-bottom: var(--spacing-sm);
+  font-size: var(--font-size-lg);
+}
+
+.approach-card p {
+  color: var(--text-medium);
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+}
+
+/* -------------------------------
+   Communication Options Section
+--------------------------------*/
+.communication-options-section {
+  padding: var(--spacing-3xl) 0;
+  background-color: white;
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-xl);
+  margin-top: var(--spacing-xl);
+}
+
+.option-card {
+  border: 2px solid var(--background-light);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-xl);
+  transition: transform var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
+}
+
+.option-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-md);
+}
+
+.option-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background-color: var(--primary-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-2xl);
+  color: var(--primary-color);
+}
+
+.option-card h3 {
+  margin-bottom: var(--spacing-sm);
+  color: var(--primary-dark);
+}
+
+.option-card p {
+  margin-bottom: var(--spacing-md);
+  color: var(--text-medium);
+}
+
+.option-features {
+  margin-top: var(--spacing-md);
+}
+
+.option-features li {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+  color: var(--text-medium);
+}
+
+.option-features li i {
+  color: var(--primary-color);
+  margin-right: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+}
+
+/* -------------------------------
+   Pricing Section
+--------------------------------*/
+.pricing-section {
+  padding: var(--spacing-3xl) 0;
+  background-color: var(--primary-bg);
 }
 
 .pricing-grid {
@@ -543,8 +343,13 @@
   transform: translateY(-10px);
 }
 
+.pricing-card.selected {
+  border: 3px solid var(--primary-color);
+  box-shadow: var(--shadow-lg);
+  transform: scale(1.05);
+}
+
 .pricing-card.popular {
-  /* border: 2px solid var(--primary-color); */
   transform: scale(1.05);
   z-index: 1;
 }
@@ -595,18 +400,8 @@
   color: var(--text-medium);
 }
 
-.pricing-header p {
-  font-size: var(--font-size-sm);
-  color: var(--text-medium);
-  margin-bottom: 0;
-}
-
 .pricing-features {
   padding: var(--spacing-xl);
-}
-
-.pricing-features ul {
-  margin-bottom: 0;
 }
 
 .pricing-features li {
@@ -632,7 +427,192 @@
   text-align: center;
 }
 
-/* Coach in My Pocket Section */
+/* -------------------------------
+   Checkout + Payment Modal
+--------------------------------*/
+.checkout-wrapper {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.checkout-btn {
+  background: var(--primary-color);
+  color: #fff;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.checkout-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.checkout-btn:hover:not(:disabled) {
+  background: var(--primary-dark);
+}
+
+.checkout-email {
+  padding: 0.7rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-right: 1rem;
+  font-size: 1rem;
+  width: 250px;
+}
+
+.checkout-email.error {
+  border: 1px solid red;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+  align-items: center;
+}
+
+.payment-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.payment-content {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+.payment-content h3 {
+  margin-bottom: 1rem;
+}
+
+.payment-method {
+  margin: 1rem 0;
+}
+
+.payment-body {
+  margin: 1.5rem 0;
+}
+
+/* Tabs for PayPal / Paystack */
+.payment-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.payment-tab {
+  border: 2px solid transparent;
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.payment-tab:hover {
+  border-color: #ccc;
+}
+
+.payment-tab.active {
+  border-color: #0070ba;
+  background: #eef6ff;
+}
+
+.tab-logo {
+  height: 30px;
+  width: auto;
+}
+
+/* Buttons inside modal */
+.payment-content .btn {
+  display: block;
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-paypal {
+  background: #0070ba;
+  color: white;
+}
+
+.btn-paystack,
+.btn-paystack-branded {
+  background: #02b1b2;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-paystack-branded {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border-radius: 50px;
+}
+
+.btn-paystack:hover,
+.btn-paystack-branded:hover {
+  background: #029191;
+}
+
+.paystack-logo {
+  height: 20px;
+  width: auto;
+}
+
+.btn-cancel {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: #ddd;
+  color: #333;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-cancel:hover {
+  background: #bbb;
+}
+
+/* -------------------------------
+   Misc Sections
+--------------------------------*/
 .coach-pocket-section {
   margin-top: var(--spacing-3xl);
 }
@@ -654,207 +634,119 @@
   font-size: var(--font-size-sm);
 }
 
-/* Responsive styles */
+.insurance-notice {
+  margin-top: var(--spacing-2xl);
+  background-color: white;
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl);
+  display: flex;
+  align-items: center;
+  box-shadow: var(--shadow-md);
+}
+
+.notice-icon {
+  flex: 0 0 70px;
+  height: 70px;
+  background-color: var(--primary-bg);
+  color: var(--primary-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-2xl);
+  margin-right: var(--spacing-xl);
+}
+
+.notice-content h3 {
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-sm);
+}
+
+.notice-content p {
+  color: var(--text-medium);
+  margin-bottom: var(--spacing-md);
+}
+
+.notice-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* -------------------------------
+   CTA Section
+--------------------------------*/
+.cta-section {
+  padding: var(--spacing-3xl) 0;
+  background-color: white;
+  text-align: center;
+}
+
+.cta-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.cta-content h2 {
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-3xl);
+}
+
+.cta-content p {
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-medium);
+  font-size: var(--font-size-lg);
+}
+
+/* -------------------------------
+   Animations
+--------------------------------*/
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.animate-on-scroll.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* -------------------------------
+   Responsive
+--------------------------------*/
 @media (max-width: 1024px) {
-  .pricing-grid {
-    gap: var(--spacing-lg);
-  }
-  
-  .pricing-card.popular {
-    transform: scale(1.03);
-  }
-  
-  .pricing-card.popular:hover {
-    transform: scale(1.03) translateY(-10px);
-  }
+  .services-hero h1 { font-size: var(--font-size-4xl); }
+  .services-hero .subtitle { font-size: var(--font-size-lg); }
+
+  .therapy-type-content { flex-direction: column; }
+  .therapy-image { flex: 0 0 300px; }
+  .therapy-areas { grid-template-columns: 1fr; }
+
+  .pricing-grid { gap: var(--spacing-lg); }
+  .pricing-card.popular { transform: scale(1.03); }
+  .pricing-card.popular:hover { transform: scale(1.03) translateY(-10px); }
 }
 
 @media (max-width: 768px) {
-  .pricing-grid {
-    gap: var(--spacing-lg);
-  }
+  .services-hero h1 { font-size: var(--font-size-3xl); }
+  .services-hero .subtitle { font-size: var(--font-size-md); }
+
+  .therapy-tabs { flex-wrap: wrap; gap: var(--spacing-md); }
+  .tab-button { min-width: calc(50% - var(--spacing-md)); }
+
+  .insurance-notice { flex-direction: column; text-align: center; }
+  .notice-icon { margin-right: 0; margin-bottom: var(--spacing-md); }
+  .therapy-cta { flex-direction: column; }
+  .options-grid { gap: var(--spacing-lg); }
 }
 
 @media (max-width: 480px) {
-  .pricing-card.popular {
-    transform: none;
-  }
-  
-  .pricing-card.popular:hover {
-    transform: translateY(-10px);
-  }
+  .tab-button { min-width: 100%; }
+  .pricing-card.popular { transform: none; }
+  .pricing-card.popular:hover { transform: translateY(-10px); }
 }
-  
-  .btn-block {
-    width: 100%;
-    display: block;
-    text-align: center;
-  }
-  
-  .insurance-notice {
-    margin-top: var(--spacing-2xl);
-    background-color: white;
-    border-radius: var(--border-radius-lg);
-    padding: var(--spacing-xl);
-    display: flex;
-    align-items: center;
-    box-shadow: var(--shadow-md);
-  }
-  
-  .notice-icon {
-    flex: 0 0 70px;
-    height: 70px;
-    background-color: var(--primary-bg);
-    color: var(--primary-color);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: var(--font-size-2xl);
-    margin-right: var(--spacing-xl);
-  }
-  
-  .notice-content h3 {
-    color: var(--primary-color);
-    margin-bottom: var(--spacing-sm);
-  }
-  
-  .notice-content p {
-    color: var(--text-medium);
-    margin-bottom: var(--spacing-md);
-  }
-  
-  .notice-content p:last-child {
-    margin-bottom: 0;
-  }
-  
-  /* CTA Section */
-  .cta-section {
-    padding: var(--spacing-3xl) 0;
-    background-color: white;
-    text-align: center;
-  }
-  
-  .cta-content {
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  
-  .cta-content h2 {
-    color: var(--primary-color);
-    margin-bottom: var(--spacing-md);
-    font-size: var(--font-size-3xl);
-  }
-  
-  .cta-content p {
-    margin-bottom: var(--spacing-lg);
-    color: var(--text-medium);
-    font-size: var(--font-size-lg);
-  }
-  
-  /* Animations */
-  .animate-on-scroll {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
-  }
-  
-  .animate-on-scroll.in-view {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  
-  /* Responsive styles */
-  @media (max-width: 1024px) {
-    .services-hero h1 {
-      font-size: var(--font-size-4xl);
-    }
-    
-    .services-hero .subtitle {
-      font-size: var(--font-size-lg);
-    }
-    
-    .therapy-type-content {
-      flex-direction: column;
-    }
-    
-    .therapy-image {
-      flex: 0 0 300px;
-    }
-    
-    .therapy-areas {
-      grid-template-columns: 1fr;
-    }
-    
-    .pricing-grid {
-      gap: var(--spacing-lg);
-    }
-    
-    .pricing-card.popular {
-      transform: scale(1.03);
-    }
-    
-    .pricing-card.popular:hover {
-      transform: scale(1.03) translateY(-10px);
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .services-hero h1 {
-      font-size: var(--font-size-3xl);
-    }
-    
-    .services-hero .subtitle {
-      font-size: var(--font-size-md);
-    }
-    
-    .therapy-tabs {
-      flex-wrap: wrap;
-      gap: var(--spacing-md);
-    }
-    
-    .tab-button {
-      min-width: calc(50% - var(--spacing-md));
-    }
-    
-    .insurance-notice {
-      flex-direction: column;
-      text-align: center;
-    }
-    
-    .notice-icon {
-      margin-right: 0;
-      margin-bottom: var(--spacing-md);
-    }
-    
-    .therapy-cta {
-      flex-direction: column;
-    }
-    
-    .options-grid {
-      gap: var(--spacing-lg);
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .tab-button {
-      min-width: 100%;
-    }
-    
-    .pricing-card.popular {
-      transform: none;
-    }
-    
-    .pricing-card.popular:hover {
-      transform: translateY(-10px);
-    }
-  }
