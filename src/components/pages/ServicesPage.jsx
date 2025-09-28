@@ -15,8 +15,8 @@ const ServicesPage = () => {
   const [activePayment, setActivePayment] = useState(null); 
   const [clientEmail, setClientEmail] = useState("");
   const [emailError, setEmailError] = useState("");
-
-   // ✅ Allowed pocket plans mapped outside
+  const [clientName, setClientName] = useState("");
+  const [nameError, setNameError] = useState("");
   const allowedPocketPlans = {
     single: ["pocket1"],
     "3sessions": ["pocket1", "pocket3"],
@@ -40,12 +40,18 @@ const ServicesPage = () => {
   }, [selectedTherapyPlan, selectedPocketPlan]);
 
   const handleCheckout = () => {
-    if (!selectedTherapyPlan || !selectedPocketPlan) {
-      setEmailError(""); // reset
+    if (!selectedTherapyPlan && !selectedPocketPlan) {
+      setEmailError(""); 
+      setNameError("");
       alert("Please select a plan before proceeding.");
       return;
     }
-  
+
+    if (!clientName.trim()) {
+      setNameError("Name is required.");
+      return;
+    }
+
     if (!clientEmail.trim()) {
       setEmailError("Email is required.");
       return;
@@ -56,17 +62,20 @@ const ServicesPage = () => {
       return;
     }
 
-    setEmailError(""); // ✅ clear error if valid
+    setEmailError(""); 
+    setNameError("");
 
     const checkoutData = {
+      name: clientName,
+      email: clientEmail,
       therapy: selectedTherapyPlan,
       pocket: selectedPocketPlan,
-      email: clientEmail,
     };
 
     console.log("Proceeding to checkout with:", checkoutData);
     setShowPaymentOptions(true);
   };
+
 
   // Example plan mapping to amount (you can refine this logic)
   const planPrices = {
@@ -339,11 +348,24 @@ const ServicesPage = () => {
               />
               {emailError && <p className="error-message">{emailError}</p>}  {/* ✅ inline error */}
 
+              <input
+                type="text"
+                placeholder="Enter your full name"
+                value={clientName}
+                onChange={(e) => {
+                  setClientName(e.target.value);
+                  setNameError("");
+                }}
+                className={`checkout-name ${nameError ? "error" : ""}`}
+                required
+              />
+              {nameError && <p className="error-message">{nameError}</p>}
+
               <button
                 className="checkout-btn"
                 onClick={handleCheckout}
                 disabled={
-                  !selectedTherapyPlan || // must have therapy
+                  !selectedTherapyPlan && // must have therapy
                   !selectedPocketPlan ||  // must have pocket
                   !clientEmail.trim() ||
                   !isValidEmail(clientEmail)
@@ -391,7 +413,7 @@ const ServicesPage = () => {
                     {activePayment === "paypal" && (
                       <PayPalScriptProvider options={{ "client-id": "AQ0P0dlrncuplv-QNWsTfofbtQ6yV_ZnEt0hhYKRatOj6ndpGZDMmMSlZ4TPS2X08TKgZfi_YFiRrtzT" /* replace with real */ }}>
                         <PayPalButtons
-                          style={{ layout: "vertical", height: 45 }}
+                          style={{ layout: "vertical", height: 50, shape: "rect", label: "pay" }}
                           createOrder={(data, actions) => {
                             return actions.order.create({
                               purchase_units: [
@@ -402,6 +424,10 @@ const ServicesPage = () => {
                                 },
                               ],
                               payer: {
+                                name: {
+                                  given_name: clientName.split(" ")[0] || clientName,   // ✅ first name
+                                  surname: clientName.split(" ").slice(1).join(" ") || "" // ✅ last name
+                                },
                                 email_address: clientEmail || undefined, // ✅ dynamic email
                               },
                             });
@@ -423,6 +449,15 @@ const ServicesPage = () => {
                       <PaystackButton
                         email={clientEmail}
                         amount={getTotalAmount()}
+                        metadata={{
+                            custom_fields: [
+                              {
+                                display_name: "Name",
+                                variable_name: "client_name",
+                                value: clientName,
+                              },
+                            ],
+                          }}
                         publicKey="pk_live_34b73780854135828702b448cae62e1bdb0f98b8"//"pk_test_8d5aa6cbe0649d73d2605b70a00324b39fab427b"
                         onSuccess={(ref) => {
                           console.log("Paystack success:", ref);
