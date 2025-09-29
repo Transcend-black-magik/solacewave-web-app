@@ -212,7 +212,28 @@ const LandingPage = () => {
               }}
             >
               <i className="fab fa-whatsapp"></i>
-              Book your therapy sessions today
+              Book your therapy sessions on Whatsapp
+            </a>
+            <a
+              href="/services"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                padding: '14px 24px',
+                background: '#e3a683ff',
+                color: '#fff',
+                borderRadius: '8px',
+                fontWeight: 600,
+                textDecoration: 'none',
+                fontSize: '1.1rem',
+              }}
+            >
+              <i className="fab fa-on"></i>
+              Book your Sessions Online
             </a>
           </div>
         </section>

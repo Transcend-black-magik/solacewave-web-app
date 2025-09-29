@@ -576,6 +576,34 @@
   width: auto;
 }
 
+
+.currency-selector {
+  margin: 15px 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.currency-selector label {
+  margin-right: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.currency-selector select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.currency-selector select:focus {
+  border-color: #0077ff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 119, 255, 0.2);
+}
+
+
 /* Buttons inside modal */
 .payment-content .btn {
   display: block;

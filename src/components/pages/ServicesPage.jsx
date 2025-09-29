@@ -17,6 +17,7 @@ const ServicesPage = () => {
   const [emailError, setEmailError] = useState("");
   const [clientName, setClientName] = useState("");
   const [nameError, setNameError] = useState("");
+  const [currency, setCurrency] = useState("USD");
   const allowedPocketPlans = {
     single: ["pocket1"],
     "3sessions": ["pocket1", "pocket3"],
@@ -265,10 +266,13 @@ const ServicesPage = () => {
 
         <section className="plans-section">
           <div className="container">
-            <h2 className="section-title">Choose Your Plan</h2>
+            <button onClick={handleGetStarted} style={{width: "100%", height: "50px", fontSize: "20px", marginBottom: "2rem", backgroundColor: "#e3a683ff", borderRadius: "10px"}}>Book your free consultaion on whatsapp</button>
+            <div style={{marginBottom: "1rem", textAlign: "center"}}>
+              <span style={{fontSize: "18px", fontWeight: "600"}}>Or</span><br/>            </div>
+            <h2 style={{color: "#833c13", fontSize: "25px", marginBottom: "1rem"}}>Select a therapy package to get started. You can add "Coach in My Pocket" for daily support.</h2>
 
             {/* Therapy Packages */}
-            <h3 className="category-title">Therapy Packages</h3>
+            {/* <h3 className="category-title">Therapy Packages</h3> */}
             <div className="pricing-grid">
               {therapyPlans.map((plan) => (
                 <div
@@ -383,6 +387,19 @@ const ServicesPage = () => {
 
                   {/* Tabs */}
                   <div className="payment-tabs">
+                    <div className="currency-selector">
+                      <label htmlFor="currency">Choose Currency: </label>
+                      <select
+                        id="currency"
+                        value={currency}
+                        onChange={(e) => setCurrency(e.target.value)}
+                      >
+                        <option value="USD">USD – US Dollar</option>
+                        <option value="EUR">EUR – Euro</option>
+                        <option value="CAD">CAD – Canadian Dollar</option>
+                      </select>
+                    </div>
+
                     <button
                       className={`payment-tab ${activePayment === "paypal" ? "active" : ""}`}
                       onClick={() => setActivePayment("paypal")}
@@ -415,33 +432,45 @@ const ServicesPage = () => {
                         <PayPalButtons
                           style={{ layout: "vertical", height: 50, shape: "rect", label: "pay" }}
                           createOrder={(data, actions) => {
+                            // Conversion rates (💡 fetch from API in production)
+                            const conversionRates = {
+                              USD: 1600, // 1 USD ≈ ₦1600
+                              EUR: 1700, // 1 EUR ≈ ₦1700
+                              CAD: 1200, // 1 CAD ≈ ₦1200
+                            };
+
+                            const ngnAmount = getTotalAmount();
+                            const convertedAmount = (ngnAmount / (conversionRates[currency] || 1600)).toFixed(2);
+
                             return actions.order.create({
                               purchase_units: [
                                 {
                                   amount: {
-                                    value: (getTotalAmount() / 1600).toFixed(2), // NGN→USD conversion
+                                    currency_code: currency,   // 👈 selected currency
+                                    value: convertedAmount,    // 👈 converted from NGN
                                   },
                                 },
                               ],
                               payer: {
                                 name: {
-                                  given_name: clientName.split(" ")[0] || clientName,   // ✅ first name
-                                  surname: clientName.split(" ").slice(1).join(" ") || "" // ✅ last name
+                                  given_name: clientName.split(" ")[0] || clientName,
+                                  surname: clientName.split(" ").slice(1).join(" ") || "",
                                 },
-                                email_address: clientEmail || undefined, // ✅ dynamic email
+                                email_address: clientEmail || undefined,
                               },
                             });
                           }}
                           onApprove={async (data, actions) => {
                             const details = await actions.order.capture();
                             console.log("PayPal Payment Success:", details);
-                            alert("Payment successful with PayPal!");
+                            alert(
+                              `Payment successful with PayPal in ${details.purchase_units[0].amount.currency_code}. Please wait for an email for schedule details.`
+                            );
                             setShowPaymentOptions(false);
-
-                            // ✅ Send WhatsApp receipt
                             sendReceiptToWhatsApp(details);
                           }}
                         />
+
                       </PayPalScriptProvider>
                     )}
 
