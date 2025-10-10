@@ -774,6 +774,30 @@
   transform: translateY(0);
 }
 
+
+.card-element {
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: white;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.whatsapp-consultation{
+  width: 100%;
+  height: 50px;
+  font-size: 20px;
+  margin-bottom: 2rem;
+  background-color: #e3a683ff;
+  border-radius: 10px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -806,6 +830,11 @@
   .notice-icon { margin-right: 0; margin-bottom: var(--spacing-md); }
   .therapy-cta { flex-direction: column; }
   .options-grid { gap: var(--spacing-lg); }
+  .whatsapp-consultation{
+    font-size: 16px;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
 }
 
 @media (max-width: 480px) {

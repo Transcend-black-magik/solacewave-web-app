@@ -1,35 +1,112 @@
-import React, { useEffect, useState } from 'react';
-import Header from '../layout/Header';
-import Footer from '../layout/Footer';
-import '../../styles/components/services-page.css';
+// ServicesPage.jsx
+import React, { useEffect, useState, useRef } from "react";
+import Header from "../layout/Header";
+import Footer from "../layout/Footer";
+import "../../styles/components/services-page.css";
+import PaystackButton from "../common/PaystackButton";
 
-import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
-import PaystackButton from '../common/PaystackButton';
+const SQUARE_APPLICATION_ID = process.env.REACT_APP_SQUARE_APPLICATION_ID;
+const SQUARE_LOCATION_ID = process.env.REACT_APP_SQUARE_LOCATION_ID;
+
+
+// Replace with your actual Cloud Function URL (set below instructions show how).
+// Example: const CREATE_PAYMENT_ENDPOINT = "https://us-central1-YOUR_PROJECT_ID.cloudfunctions.net/createSquarePayment";
+const CREATE_PAYMENT_ENDPOINT = "https://us-central1-solacewave-15844.cloudfunctions.net/createSquarePayment";
 
 const ServicesPage = () => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [activeTab, setActiveTab] = useState('individual');
+  const [activeTab, setActiveTab] = useState("individual");
   const [selectedTherapyPlan, setSelectedTherapyPlan] = useState(null);
   const [selectedPocketPlan, setSelectedPocketPlan] = useState(null);
-  const [showPaymentOptions, setShowPaymentOptions] = useState(false); // 👈 new state
-  const [activePayment, setActivePayment] = useState(null); 
+  const [showPaymentOptions, setShowPaymentOptions] = useState(false);
+  const [activePayment, setActivePayment] = useState(null); // "square" or "paystack"
   const [clientEmail, setClientEmail] = useState("");
   const [emailError, setEmailError] = useState("");
   const [clientName, setClientName] = useState("");
+  const [clientCountry, setClientCountry] = useState("");
   const [nameError, setNameError] = useState("");
   const [currency, setCurrency] = useState("USD");
+  const [conversionRates, setConversionRates] = useState({
+    USD: 1600,
+    EUR: 1700,
+    CAD: 1200,
+  });
+
+  // Square related refs/state
+  const [squareLoaded, setSquareLoaded] = useState(false);
+  const [cardAttached, setCardAttached] = useState(false);
+  const [squarePayments, setSquarePayments] = useState(null);
+  const [card, setCard] = useState(null);
+  const [squareError, setSquareError] = useState("");
+  const [processingSquare, setProcessingSquare] = useState(false);
+  const cardContainerRef = useRef(null);
+
   const allowedPocketPlans = {
     single: ["pocket1"],
     "3sessions": ["pocket1", "pocket3"],
     "6sessions": ["pocket1", "pocket3", "pocket6"],
   };
 
-  const isValidEmail = (email) => {
-    // Simple regex: checks for "something@something.domain"
-    return /\S+@\S+\.\S+/.test(email);
+  // Auto-detect user location -> set currency
+  useEffect(() => {
+    const fetchCurrency = async () => {
+      try {
+        const res = await fetch("https://ipapi.co/json/");
+        const data = await res.json();
+        const countryCode = data.country_code;
+
+        let defaultCurrency = "USD";
+        if (countryCode === "NG") defaultCurrency = "NGN";
+        else if (countryCode === "CA") defaultCurrency = "CAD";
+        else if (countryCode === "GB" || countryCode === "FR" || countryCode === "DE") defaultCurrency = "EUR";
+
+        setCurrency(defaultCurrency);
+      } catch (err) {
+        console.error("Currency fetch failed:", err);
+        setCurrency("USD");
+      }
+    };
+
+    fetchCurrency();
+  }, []);
+
+
+  useEffect(() => {
+  const fetchRates = async () => {
+    try {
+      const res = await fetch(
+        "https://api.exchangerate.host/latest?base=NGN&symbols=USD,EUR,CAD"
+      );
+      if (!res.ok) throw new Error("Failed to fetch exchange rates");
+
+      const data = await res.json();
+      if (data && data.rates) {
+        setConversionRates({
+          USD: data.rates.USD,
+          EUR: data.rates.EUR,
+          CAD: data.rates.CAD,
+        });
+      } else {
+        console.error("Unexpected response:", data);
+      }
+    } catch (err) {
+      console.error("Error fetching FX rates:", err);
+
+      // Optional fallback if API is unreachable
+      setConversionRates({
+        USD: 0.0011, // ~NGN to USD
+        EUR: 0.00095, // ~NGN to EUR
+        CAD: 0.0015, // ~NGN to CAD
+      });
+    }
   };
 
-  // Reset pocket plan if therapy plan changes and invalid
+  fetchRates();
+}, []);
+
+
+  const isValidEmail = (email) => /\S+@\S+\.\S+/.test(email);
+
   useEffect(() => {
     if (
       selectedTherapyPlan &&
@@ -42,7 +119,7 @@ const ServicesPage = () => {
 
   const handleCheckout = () => {
     if (!selectedTherapyPlan && !selectedPocketPlan) {
-      setEmailError(""); 
+      setEmailError("");
       setNameError("");
       alert("Please select a plan before proceeding.");
       return;
@@ -63,22 +140,14 @@ const ServicesPage = () => {
       return;
     }
 
-    setEmailError(""); 
+    setEmailError("");
     setNameError("");
 
-    const checkoutData = {
-      name: clientName,
-      email: clientEmail,
-      therapy: selectedTherapyPlan,
-      pocket: selectedPocketPlan,
-    };
-
-    console.log("Proceeding to checkout with:", checkoutData);
     setShowPaymentOptions(true);
+    // default active payment to square for international (or user can pick)
+    setActivePayment("square");
   };
 
-
-  // Example plan mapping to amount (you can refine this logic)
   const planPrices = {
     single: 20000,
     "3sessions": 55000,
@@ -94,6 +163,160 @@ const ServicesPage = () => {
     if (selectedPocketPlan) total += planPrices[selectedPocketPlan] || 0;
     return total;
   };
+  
+
+  const getConvertedAmount = () => {
+    const ngnAmount = getTotalAmount();
+    return (ngnAmount / (conversionRates[currency] || 1600)).toFixed(2);
+  };
+
+
+  // Load Square payments SDK script only when payment modal opens (lazy)
+  useEffect(() => {
+    if (!showPaymentOptions) return;
+
+    // don't load twice
+    if (squareLoaded) return;
+
+    const script = document.createElement("script");
+    // Production / latest web payments SDK
+    script.src = "https://web.squarecdn.com/v1/square.js";
+    script.type = "text/javascript";
+    script.async = true;
+    script.onload = () => {
+      setSquareLoaded(true);
+    };
+    script.onerror = () => {
+      console.error("Square Web Payments SDK failed to load.");
+      setSquareError("Unable to load Square payments. Try again later.");
+    };
+    document.body.appendChild(script);
+
+    return () => {
+      // keep script for caching between opens; do not remove to prevent re-load jank
+    };
+  }, [showPaymentOptions, squareLoaded]);
+
+  // When SDK is ready, initialize payments and card
+  useEffect(() => {
+  const initSquare = async () => {
+    if (!squareLoaded || typeof window.Square === "undefined") return;
+
+    try {
+      const payments = window.Square.payments(SQUARE_APPLICATION_ID, SQUARE_LOCATION_ID);
+      setSquarePayments(payments);
+
+      const cardObj = await payments.card();
+      setCard(cardObj);
+
+      await cardObj.attach("#card-container");
+      setCardAttached(true);
+    } catch (err) {
+      console.error("Square init error:", err);
+      setSquareError("Could not initialize Square payments.");
+    }
+  };
+
+  if (showPaymentOptions && squareLoaded) {
+    // Always re-initialize when modal opens
+    setCardAttached(false);
+    initSquare();
+  }
+}, [squareLoaded, showPaymentOptions]);
+
+  
+
+  const handleSquarePayment = async () => {
+    setSquareError("");
+    if (!card || !squarePayments) {
+      setSquareError("Card form not initialized.");
+      return;
+    }
+
+    setProcessingSquare(true);
+
+    try {
+      // Tokenize card (returns an object with status and token)
+      const tokenResult = await card.tokenize();
+      if (tokenResult.status === "OK") {
+        const sourceId = tokenResult.token; // send this to backend
+        // amount in cents (Smallest currency unit)
+        // getConvertedAmount returns e.g. "12.34"
+        const amountStr = getConvertedAmount();
+        const amountCents = Math.round(Number(amountStr) * 100);
+
+        // call your firebase function to create a payment
+        const res = await fetch(CREATE_PAYMENT_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            sourceId,
+            amountCents,
+            currency: currency, // USD/EUR/CAD per selection
+            name: clientName,
+            email: clientEmail,
+            country: clientCountry,  // 👈 added
+            metadata: {
+              therapy: selectedTherapyPlan,
+              pocket: selectedPocketPlan,
+            },
+          }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          console.error("Square payment server error", data);
+          setSquareError(data?.message || "Payment failed on server.");
+          setProcessingSquare(false);
+          return;
+        }
+
+        // success
+        console.log("Square payment success:", data);
+        alert("Payment successful with Square! Thank you.");
+        setShowPaymentOptions(false);
+        setProcessingSquare(false);
+
+        // Optionally send receipt via WhatsApp
+        sendReceiptToWhatsApp(data.payment);
+      } else {
+        // tokenization failed
+        console.error("Tokenization error:", tokenResult);
+        setSquareError(
+          tokenResult.errors?.map((e) => e.message).join(", ") ||
+            "Card tokenization failed."
+        );
+        setProcessingSquare(false);
+      }
+    } catch (err) {
+      console.error("Square payment error:", err);
+      setSquareError("Payment failed. Try again.");
+      setProcessingSquare(false);
+    }
+  };
+
+  const sendReceiptToWhatsApp = (paymentDetails) => {
+    const phoneNumber = "2347085256034"; // your WhatsApp business number
+    const amount = getTotalAmount();
+    const receiptText = `Hello, I just made a payment for my therapy plan.
+Email: ${clientEmail}
+Amount: ₦${amount.toLocaleString()}
+Payment Reference: ${paymentDetails?.id || paymentDetails?.reference || "N/A"}
+
+Please confirm my booking.`;
+
+    const encodedText = encodeURIComponent(receiptText);
+    window.location.href = `https://wa.me/${phoneNumber}?text=${encodedText}`;
+  };
+
+  const handlePocketClick = (planId) => {
+    if (!selectedTherapyPlan) return;
+    if (!allowedPocketPlans[selectedTherapyPlan]?.includes(planId)) return;
+    setSelectedPocketPlan(planId);
+  };
 
   // Animation / content loaded
   useEffect(() => {
@@ -101,35 +324,31 @@ const ServicesPage = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // intersection observer for scroll animations
+  // Intersection observer for scroll animations
   useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in-view');
-        }
-      });
-    }, { threshold: 0.1 });
-    
-    document.querySelectorAll('.animate-on-scroll').forEach(el => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    document.querySelectorAll(".animate-on-scroll").forEach((el) => {
       observer.observe(el);
     });
-    
+
     return () => {
-      document.querySelectorAll('.animate-on-scroll').forEach(el => {
+      document.querySelectorAll(".animate-on-scroll").forEach((el) => {
         observer.unobserve(el);
       });
     };
   }, [isLoaded]);
 
-  // Handle Pocket plan click: disable unallowed plans
-  const handlePocketClick = (planId) => {
-    if (!selectedTherapyPlan) return; // cannot select without therapy
-    if (!allowedPocketPlans[selectedTherapyPlan]?.includes(planId)) return; // disallow invalid
-    setSelectedPocketPlan(planId);
-  };
-
-
+  // UI data (plans)
   const therapyPlans = [
     {
       id: "single",
@@ -182,7 +401,7 @@ const ServicesPage = () => {
         "Therapists are active and respond continually throughout the day",
         "No need to wait for your next appointment. Unpack things that happen on a daily basis",
         "Perfect for staying grounded through your week",
-        "Designed for real-life moments"
+        "Designed for real-life moments",
       ],
     },
     {
@@ -196,7 +415,7 @@ const ServicesPage = () => {
         "Therapists are active and respond continually throughout the day",
         "No need to wait for your next appointment. Unpack things that happen on a daily basis",
         "Perfect for staying grounded through your week",
-        "Designed for real-life moments"
+        "Designed for real-life moments",
       ],
     },
     {
@@ -210,69 +429,57 @@ const ServicesPage = () => {
         "Therapists are active and respond continually throughout the day",
         "No need to wait for your next appointment. Unpack things that happen on a daily basis",
         "Perfect for staying grounded through your week",
-        "Designed for real-life moments"
+        "Designed for real-life moments",
       ],
     },
   ];
 
-  const sendReceiptToWhatsApp = (paymentDetails) => {
-    const phoneNumber = "2347085256034"; // ✅ your WhatsApp business number
-    const amount = getTotalAmount();
-    const receiptText = `Hello, I just made a payment for my therapy plan.
-    Email: ${clientEmail}
-    Amount: ₦${amount.toLocaleString()}
-    Payment Reference: ${paymentDetails?.id || paymentDetails?.reference || "N/A"}
-      
-    Please confirm my booking.`;
+  const handleTabChange = (tab) => setActiveTab(tab);
 
-    const encodedText = encodeURIComponent(receiptText);
-    window.location.href = `https://wa.me/${phoneNumber}?text=${encodedText}`;
-  };
-
-
-  useEffect(() => {
-    // Add animation delay to simulate content loading
-    const timer = setTimeout(() => {
-      setIsLoaded(true);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Handle tab change
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-  };
-
-  // Handle Get Started button click
   const handleGetStarted = () => {
-    // window.location.href = 'https://solacewave-app.web.app/';
-    window.location.href = 'https://wa.me/2347085256034?text=Hello%20I%20would%20like%20to%20book%20a%20therapy%20session';
+    window.location.href =
+      "https://wa.me/2347085256034?text=Hello%20I%20would%20like%20to%20book%20a%20therapy%20session";
   };
 
   return (
     <div className="services-page">
       <Header />
-      
-      <main className={`services-content ${isLoaded ? 'loaded' : ''}`}>
+
+      <main className={`services-content ${isLoaded ? "loaded" : ""}`}>
         <section className="services-hero">
           <div className="container">
             <div className="services-hero-content animate-on-scroll">
               <h1>Our Therapy Services</h1>
-              <p className="subtitle">Personalized mental health care tailored to your unique needs</p>
+              <p className="subtitle">
+                Personalized mental health care tailored to your unique needs
+              </p>
             </div>
           </div>
         </section>
 
         <section className="plans-section">
           <div className="container">
-            <button onClick={handleGetStarted} style={{width: "100%", height: "50px", fontSize: "20px", marginBottom: "2rem", backgroundColor: "#e3a683ff", borderRadius: "10px"}}>Book your free consultaion on whatsapp</button>
-            <div style={{marginBottom: "1rem", textAlign: "center"}}>
-              <span style={{fontSize: "18px", fontWeight: "600"}}>Or</span><br/>            </div>
-            <h2 style={{color: "#833c13", fontSize: "25px", marginBottom: "1rem"}}>Select a therapy package to get started. You can add "Coach in My Pocket" for daily support.</h2>
+            <button
+              onClick={handleGetStarted}
+              className="whatsapp-consultation">
+              Book your free consultaion on whatsapp
+            </button>
 
-            {/* Therapy Packages */}
-            {/* <h3 className="category-title">Therapy Packages</h3> */}
+            <div style={{ marginBottom: "1rem", textAlign: "center" }}>
+              <span style={{ fontSize: "18px", fontWeight: "600" }}>Or</span>
+              <br />
+            </div>
+            <h2
+              style={{
+                color: "#833c13",
+                fontSize: "25px",
+                marginBottom: "1rem",
+              }}
+            >
+              Select a therapy package to get started. You can add "Coach in My
+              Pocket" for daily support.
+            </h2>
+
             <div className="pricing-grid">
               {therapyPlans.map((plan) => (
                 <div
@@ -285,10 +492,9 @@ const ServicesPage = () => {
                   <div className="pricing-header">
                     <h3>{plan.name}</h3>
                     <div className="price">
-                      <span className="amount">{plan.price}</span> <br/>
+                      <span className="amount">{plan.price}</span> <br />
                       <span className="description">{plan.description}</span>
                     </div>
-                    
                   </div>
                   <div className="pricing-features">
                     <ul>
@@ -303,31 +509,39 @@ const ServicesPage = () => {
               ))}
             </div>
 
-            {/* Coach in My Pocket */}
-            {/* Pocket Plans */}
             <h3 className="category-title">Coach in My Pocket</h3>
-            <span>Daily text messaging with your therapist(only activated with ongoing therapy sessions)</span>
+            <span>
+              Daily text messaging with your therapist(only activated with
+              ongoing therapy sessions)
+            </span>
             <div className="pricing-grid">
-              {pocketPlans.map(plan => {
-                const isAllowed = selectedTherapyPlan && allowedPocketPlans[selectedTherapyPlan]?.includes(plan.id);
+              {pocketPlans.map((plan) => {
+                const isAllowed =
+                  selectedTherapyPlan &&
+                  allowedPocketPlans[selectedTherapyPlan]?.includes(plan.id);
                 return (
                   <div
                     key={plan.id}
-                    className={`pricing-card ${selectedPocketPlan === plan.id ? "selected" : ""} ${!isAllowed ? "disabled" : ""}`}
+                    className={`pricing-card ${
+                      selectedPocketPlan === plan.id ? "selected" : ""
+                    } ${!isAllowed ? "disabled" : ""}`}
                     onClick={() => handlePocketClick(plan.id)}
                   >
                     <div className="pricing-header">
                       <h3>{plan.name}</h3>
                       <div className="price">
                         <span className="amount">{plan.price}</span>
-                        <span>{plan.period}</span><br/>
+                        <span>{plan.period}</span>
+                        <br />
                         <span className="note">{plan.note}</span>
                       </div>
                     </div>
                     <div className="pricing-features">
                       <ul>
                         {plan.features.map((f, i) => (
-                          <li key={i}><i className="fas fa-check"></i> {f}</li>
+                          <li key={i}>
+                            <i className="fas fa-check"></i> {f}
+                          </li>
                         ))}
                       </ul>
                     </div>
@@ -336,8 +550,6 @@ const ServicesPage = () => {
               })}
             </div>
 
-
-            {/* Checkout Button */}
             <div className="checkout-wrapper">
               <input
                 type="email"
@@ -345,12 +557,12 @@ const ServicesPage = () => {
                 value={clientEmail}
                 onChange={(e) => {
                   setClientEmail(e.target.value);
-                  setEmailError(""); // clear error while typing
+                  setEmailError("");
                 }}
                 className={`checkout-email ${emailError ? "error" : ""}`}
                 required
               />
-              {emailError && <p className="error-message">{emailError}</p>}  {/* ✅ inline error */}
+              {emailError && <p className="error-message">{emailError}</p>}
 
               <input
                 type="text"
@@ -365,18 +577,47 @@ const ServicesPage = () => {
               />
               {nameError && <p className="error-message">{nameError}</p>}
 
+              <input
+                type="text"
+                placeholder="Enter your country"
+                value={clientCountry}
+                onChange={(e) => setClientCountry(e.target.value)}
+                className="checkout-name"
+                required
+              />
+
               <button
                 className="checkout-btn"
                 onClick={handleCheckout}
                 disabled={
-                  !selectedTherapyPlan && // must have therapy
-                  !selectedPocketPlan ||  // must have pocket
+                  !selectedTherapyPlan ||
+                  !clientName.trim() ||
                   !clientEmail.trim() ||
-                  !isValidEmail(clientEmail)
-              }
+                  !isValidEmail(clientEmail) ||
+                  !clientCountry.trim()
+                }
+                style={{
+                  opacity:
+                    !selectedTherapyPlan ||
+                    !clientName.trim() ||
+                    !clientEmail.trim() ||
+                    !isValidEmail(clientEmail) ||
+                    !clientCountry.trim()
+                      ? 0.6
+                      : 1,
+                  cursor:
+                    !selectedTherapyPlan ||
+                    !clientName.trim() ||
+                    !clientEmail.trim() ||
+                    !isValidEmail(clientEmail) ||
+                    !clientCountry.trim()
+                      ? "not-allowed"
+                      : "pointer",
+                }}
               >
                 Checkout
               </button>
+
             </div>
 
             {/* Payment Options Modal */}
@@ -385,34 +626,35 @@ const ServicesPage = () => {
                 <div className="payment-content">
                   <h3>Select Payment Method</h3>
 
-                  {/* Tabs */}
+                  <div className="currency-selector">
+                    <label htmlFor="currency">Choose Currency: </label>
+                    <select
+                      id="currency"
+                      value={currency}
+                      onChange={(e) => setCurrency(e.target.value)}
+                    >
+                      <option value="USD">USD – US Dollar</option>
+                      <option value="EUR">EUR – Euro</option>
+                      <option value="CAD">CAD – Canadian Dollar</option>
+                    </select>
+                  </div>
+
                   <div className="payment-tabs">
-                    <div className="currency-selector">
-                      <label htmlFor="currency">Choose Currency: </label>
-                      <select
-                        id="currency"
-                        value={currency}
-                        onChange={(e) => setCurrency(e.target.value)}
-                      >
-                        <option value="USD">USD – US Dollar</option>
-                        <option value="EUR">EUR – Euro</option>
-                        <option value="CAD">CAD – Canadian Dollar</option>
-                      </select>
-                    </div>
+                    <button
+                      className={`payment-tab ${
+                        activePayment === "square" ? "active" : ""
+                      }`}
+                      onClick={() => setActivePayment("square")}
+                    >
+                      <div>
+                        <span className="payment-tap-button">Pay with Card (Square)</span>
+                      </div>
+                    </button>
 
                     <button
-                      className={`payment-tab ${activePayment === "paypal" ? "active" : ""}`}
-                      onClick={() => setActivePayment("paypal")}
-                    >
-                      <img
-                        src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_111x69.jpg"
-                        alt="PayPal"
-                        className="tab-logo"
-                      />
-                       <div><span className='payment-tap-button'>Pay CAD USD EUR with PayPal</span></div>
-                    </button>
-                    <button
-                      className={`payment-tab ${activePayment === "paystack" ? "active" : ""}`}
+                      className={`payment-tab ${
+                        activePayment === "paystack" ? "active" : ""
+                      }`}
                       onClick={() => setActivePayment("paystack")}
                     >
                       <img
@@ -420,58 +662,37 @@ const ServicesPage = () => {
                         alt="Paystack"
                         className="tab-logo"
                       />
-                      <div><span className='payment-tap-button'>Pay NGN with Paystack</span></div>
-                      
+                      <div>
+                        <span className="payment-tap-button">Pay with Paystack</span>
+                      </div>
                     </button>
                   </div>
 
-                  {/* Tab Content */}
                   <div className="payment-body">
-                    {activePayment === "paypal" && (
-                      <PayPalScriptProvider options={{ "client-id": "AQ0P0dlrncuplv-QNWsTfofbtQ6yV_ZnEt0hhYKRatOj6ndpGZDMmMSlZ4TPS2X08TKgZfi_YFiRrtzT" /* replace with real */ }}>
-                        <PayPalButtons
-                          style={{ layout: "vertical", height: 50, shape: "rect", label: "pay" }}
-                          createOrder={(data, actions) => {
-                            // Conversion rates (💡 fetch from API in production)
-                            const conversionRates = {
-                              USD: 1600, // 1 USD ≈ ₦1600
-                              EUR: 1700, // 1 EUR ≈ ₦1700
-                              CAD: 1200, // 1 CAD ≈ ₦1200
-                            };
+                    {activePayment === "square" && (
+                      <div
+                        style={{ display: activePayment === "square" ? "block" : "none" }}
+                      >
+                        <p>
+                          Amount: {currency} {getConvertedAmount()}
+                        </p>
+                        <div
+                          id="card-container"
+                          ref={cardContainerRef}
+                          style={{ marginBottom: "1rem" }}
+                        ></div>
 
-                            const ngnAmount = getTotalAmount();
-                            const convertedAmount = (ngnAmount / (conversionRates[currency] || 1600)).toFixed(2);
+                        {squareError && <p className="error-message">{squareError}</p>}
 
-                            return actions.order.create({
-                              purchase_units: [
-                                {
-                                  amount: {
-                                    currency_code: currency,   // 👈 selected currency
-                                    value: convertedAmount,    // 👈 converted from NGN
-                                  },
-                                },
-                              ],
-                              payer: {
-                                name: {
-                                  given_name: clientName.split(" ")[0] || clientName,
-                                  surname: clientName.split(" ").slice(1).join(" ") || "",
-                                },
-                                email_address: clientEmail || undefined,
-                              },
-                            });
-                          }}
-                          onApprove={async (data, actions) => {
-                            const details = await actions.order.capture();
-                            console.log("PayPal Payment Success:", details);
-                            alert(
-                              `Payment successful with PayPal in ${details.purchase_units[0].amount.currency_code}. Please wait for an email for schedule details.`
-                            );
-                            setShowPaymentOptions(false);
-                            sendReceiptToWhatsApp(details);
-                          }}
-                        />
+                        <button
+                          className="checkout-btn"
+                          onClick={handleSquarePayment}
+                          disabled={processingSquare}
+                        >
+                          {processingSquare ? "Processing..." : "Pay with Card"}
+                        </button>
+                      </div>
 
-                      </PayPalScriptProvider>
                     )}
 
                     {activePayment === "paystack" && (
@@ -479,21 +700,24 @@ const ServicesPage = () => {
                         email={clientEmail}
                         amount={getTotalAmount()}
                         metadata={{
-                            custom_fields: [
-                              {
-                                display_name: "Name",
-                                variable_name: "client_name",
-                                value: clientName,
-                              },
-                            ],
-                          }}
-                        publicKey="pk_live_34b73780854135828702b448cae62e1bdb0f98b8"//"pk_test_8d5aa6cbe0649d73d2605b70a00324b39fab427b"
+                          custom_fields: [
+                            {
+                              display_name: "Name",
+                              variable_name: "client_name",
+                              value: clientName,
+                            },
+                             {
+                              display_name: "Country",
+                              variable_name: "client_country",
+                              value: clientCountry,
+                            },
+                          ],
+                        }}
+                        publicKey="pk_live_34b73780854135828702b448cae62e1bdb0f98b8"
                         onSuccess={(ref) => {
                           console.log("Paystack success:", ref);
                           alert("Payment successful with Paystack!");
                           setShowPaymentOptions(false);
-
-                          // ✅ Send WhatsApp receipt
                           sendReceiptToWhatsApp(ref);
                         }}
                         onClose={() => alert("Payment closed")}
@@ -501,19 +725,18 @@ const ServicesPage = () => {
                     )}
                   </div>
 
-                  {/* Cancel Button */}
-                  <button className="btn-cancel" onClick={() => setShowPaymentOptions(false)}>
+                  <button
+                    className="btn-cancel"
+                    onClick={() => setShowPaymentOptions(false)}
+                  >
                     Cancel
                   </button>
                 </div>
               </div>
             )}
-
           </div>
         </section>
-
-        
-        
+                      
         <section className="therapy-types-section">
           <div className="container">
             <h2 className="section-title animate-on-scroll">We Offer Multiple Types of Therapy</h2>
@@ -771,7 +994,7 @@ const ServicesPage = () => {
           </div>
         </section>
       </main>
-      
+
       <Footer />
     </div>
   );
