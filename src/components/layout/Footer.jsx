@@ -89,10 +89,34 @@ const Footer = () => {
         <div className="container">
           <div className="footer-main">
             <div className="footer-logo">
-              <Link to="/">
-                <img src="/assets/images/logo.svg" alt="Solace Wave Therapy" />
-                <span>Solace Wave Therapy</span>
+              <Link
+                to="/"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <img
+                  src="/Solacelogosuite-05.png"
+                  alt="Solace Wave Therapy"
+                  style={{
+                    height: '42px',
+                    objectFit: 'contain',
+                    marginRight: '-12px', // same tight spacing you liked in the header
+                    marginTop: '-2px',
+                  }}
+                />
+                <span
+                  style={{
+                    fontWeight: '500',
+                    fontSize: '1rem',
+                    letterSpacing: '-0.3px',
+                  }}
+                >
+                  Solace Wave Therapy
+                </span>
               </Link>
+
               <p>Your journey to better mental health begins with us.</p>
             </div>
             

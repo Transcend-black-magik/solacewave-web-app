@@ -156,6 +156,46 @@ const ServicesPage = () => {
     pocket3: 20000,
     pocket6: 40000,
   };
+  // ==== FIXED PRICES PER CURRENCY (NO LIVE FX) ====
+// These are the exact fixed amounts you provided (yellow in your PDF).
+// We use them whenever the user pays with card (Square) in USD/EUR/CAD.
+// NGN prices remain as-is for Paystack.
+  const FIXED_PRICES = {
+    USD: {
+      single: 16.99,
+      "3sessions": 40.99,
+      "6sessions": 74.99,
+      pocket1: 6.70,
+      pocket3: 16.99,
+      // 6 weeks not in PDF — using 2x 3 weeks, rounded to .99 for consistency
+      pocket6: 33.99,
+    },
+    EUR: {
+      single: 14.99,
+      "3sessions": 35.99,
+      "6sessions": 64.99,
+      pocket1: 6.50,
+      pocket3: 14.99,
+      pocket6: 29.99,
+    },
+    CAD: {
+      single: 19.50,
+      "3sessions": 53.99,
+      "6sessions": 102.99,
+      pocket1: 6.68,
+      pocket3: 19.50,
+      // Staying consistent (2x 3 weeks)
+      pocket6: 39.00,
+    },
+    GBP: {
+      single: 13.99,       
+      "3sessions": 30.99,  
+      "6sessions": 56.99,  
+      pocket1: 5.50,      
+      pocket3: 13.99,      
+      pocket6: 30.99,    
+  },
+  };
 
   const getTotalAmount = () => {
     let total = 0;
@@ -165,9 +205,19 @@ const ServicesPage = () => {
   };
   
 
+  // Use fixed prices for USD/EUR/CAD instead of FX conversion
   const getConvertedAmount = () => {
-    const ngnAmount = getTotalAmount();
-    return (ngnAmount / (conversionRates[currency] || 1600)).toFixed(2);
+    // NGN stays as NGN (Paystack flow)
+    if (currency === "NGN") return getTotalAmount().toFixed(2);
+
+    const table = FIXED_PRICES[currency];
+    if (!table) return "0.00";
+
+    let total = 0;
+    if (selectedTherapyPlan) total += Number(table[selectedTherapyPlan] || 0);
+    if (selectedPocketPlan) total += Number(table[selectedPocketPlan] || 0);
+
+    return total.toFixed(2);
   };
 
 
@@ -552,6 +602,19 @@ Please confirm my booking.`;
 
             <div className="checkout-wrapper">
               <input
+                type="text"
+                placeholder="Enter your full name"
+                value={clientName}
+                onChange={(e) => {
+                  setClientName(e.target.value);
+                  setNameError("");
+                }}
+                className={`checkout-name ${nameError ? "error" : ""}`}
+                required
+              />
+              {nameError && <p className="error-message">{nameError}</p>}
+              
+              <input
                 type="email"
                 placeholder="Enter your email"
                 value={clientEmail}
@@ -564,18 +627,6 @@ Please confirm my booking.`;
               />
               {emailError && <p className="error-message">{emailError}</p>}
 
-              <input
-                type="text"
-                placeholder="Enter your full name"
-                value={clientName}
-                onChange={(e) => {
-                  setClientName(e.target.value);
-                  setNameError("");
-                }}
-                className={`checkout-name ${nameError ? "error" : ""}`}
-                required
-              />
-              {nameError && <p className="error-message">{nameError}</p>}
 
               <input
                 type="text"
@@ -636,6 +687,7 @@ Please confirm my booking.`;
                       <option value="USD">USD – US Dollar</option>
                       <option value="EUR">EUR – Euro</option>
                       <option value="CAD">CAD – Canadian Dollar</option>
+                      <option value="GBP">GBP – British Pound</option>
                     </select>
                   </div>
 
