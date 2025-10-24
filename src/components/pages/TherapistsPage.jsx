@@ -51,19 +51,19 @@ const TherapistsPage = () => {
       acceptingNew: true,
       category: "social-worker"
     },
-    {
-      id: 4,
-      name: "Uche Lord-Michael",
-      title: "Marriage Counselor, Relationship coach, Spiritual guidance",
-      specialties: ["Christian Marriage Counselling", "Pre-Marital Counselling", "Emotional Healing", "Spiritual Guidance"],
-      approaches: ["Faith-Based Counselling", "Scripture-Centered Dialogue", "Emotional Insight Therapy", "Biblical Principles of Partnership"],
-      image: "/assets/images/therapist-9.jpg",
-      // education: "M.S.W. University of Chicago",
-      experience: "10+ years serving couples within church ministry",
-      languages: ["English", 'Igbo'],
-      acceptingNew: true,
-      category: "social-worker"
-    },
+    // {
+    //   id: 4,
+    //   name: "Uche Lord-Michael",
+    //   title: "Marriage Counselor, Relationship coach, Spiritual guidance",
+    //   specialties: ["Christian Marriage Counselling", "Pre-Marital Counselling", "Emotional Healing", "Spiritual Guidance"],
+    //   approaches: ["Faith-Based Counselling", "Scripture-Centered Dialogue", "Emotional Insight Therapy", "Biblical Principles of Partnership"],
+    //   image: "/assets/images/therapist-9.jpg",
+    //   // education: "M.S.W. University of Chicago",
+    //   experience: "10+ years serving couples within church ministry",
+    //   languages: ["English", 'Igbo'],
+    //   acceptingNew: true,
+    //   category: "social-worker"
+    // },
     {
       id: 5,
       name: "OLA",

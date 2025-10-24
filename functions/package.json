@@ -9,7 +9,7 @@
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": "22"
+    "node": "20"
   },
   "main": "index.js",
   "dependencies": {
@@ -18,7 +18,7 @@
     "firebase-admin": "^13.5.0",
     "firebase-functions": "^6.4.0",
     "sib-api-v3-sdk": "^8.5.0",
-    "square": "^43.1.0"
+    "square": "^37.0.0"
   },
   "devDependencies": {
     "firebase-functions-test": "^3.1.0"

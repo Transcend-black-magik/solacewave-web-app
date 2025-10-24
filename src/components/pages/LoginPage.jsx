@@ -9,10 +9,7 @@ import '../../styles/components/login-page.css';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [generalError, setGeneralError] = useState('');
@@ -21,138 +18,87 @@ const LoginPage = () => {
   const [resetEmail, setResetEmail] = useState('');
   const [resetError, setResetError] = useState('');
 
-  
-  
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-      
-    }));
-    
-    // Clear error for this field
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
-    }
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
   };
-  
+
   const validateForm = () => {
     const newErrors = {};
-    
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Email is invalid';
     }
-    
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    }
-    
+    if (!formData.password) newErrors.password = 'Password is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
-    
+    if (!validateForm()) return;
     setLoading(true);
     setGeneralError('');
-    
+
     try {
-      await signInWithEmailAndPassword(
-        auth,
-        formData.email,
-        formData.password
-      );
-      
-      // Navigate to dashboard on successful login
+      await signInWithEmailAndPassword(auth, formData.email, formData.password);
       navigate('/dashboard');
     } catch (error) {
       console.error('Login error:', error);
-      
-      let errorMessage = 'Failed to log in. Please check your credentials and try again.';
-      
-      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-        errorMessage = 'Incorrect email or password. Please try again.';
-      } else if (error.code === 'auth/too-many-requests') {
-        errorMessage = 'Too many unsuccessful login attempts. Please try again later or reset your password.';
-      }
-      
-      setGeneralError(errorMessage);
+      let msg = 'Failed to log in. Please check your credentials and try again.';
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password')
+        msg = 'Incorrect email or password. Please try again.';
+      else if (error.code === 'auth/too-many-requests')
+        msg = 'Too many unsuccessful login attempts. Please try again later.';
+      setGeneralError(msg);
     } finally {
       setLoading(false);
     }
   };
-  
+
   const handleResetPassword = async (e) => {
     e.preventDefault();
-    
-    
-    if (!resetEmail.trim()) {
-      setResetError('Please enter your email address');
-      return;
-    }
-    
-    if (!/\S+@\S+\.\S+/.test(resetEmail)) {
-      setResetError('Please enter a valid email address');
-      return;
-    }
-    
+    if (!resetEmail.trim()) return setResetError('Please enter your email address');
+    if (!/\S+@\S+\.\S+/.test(resetEmail)) return setResetError('Please enter a valid email address');
+
     setLoading(true);
     setResetError('');
-    
     try {
       await sendPasswordResetEmail(auth, resetEmail);
       setResetSent(true);
     } catch (error) {
       console.error('Password reset error:', error);
-      
-      let errorMessage = 'Failed to send password reset email. Please try again.';
-      
-      if (error.code === 'auth/user-not-found') {
-        errorMessage = 'No account found with this email address.';
-      }
-      
-      setResetError(errorMessage);
+      let msg = 'Failed to send password reset email. Please try again.';
+      if (error.code === 'auth/user-not-found') msg = 'No account found with this email.';
+      setResetError(msg);
     } finally {
       setLoading(false);
     }
   };
-  
+
   const toggleResetForm = () => {
     setShowResetForm(!showResetForm);
     setResetEmail(formData.email || '');
     setResetError('');
     setResetSent(false);
   };
-  
+
   return (
     <div className="login-page">
-      <AnimatedBackground variant="subtle" />
-      
+      {/* 🔧 Fix: remove initial image flash */}
+      <AnimatedBackground variant="subtle" disableFallbackImage />
+
       <div className="login-container">
         <div className="login-header">
           <h1>Welcome Back</h1>
           <p>Sign in to continue your therapy journey</p>
         </div>
-        
-        {generalError && (
-          <div className="error-message general-error">
-            {generalError}
-          </div>
-        )}
-        
+
+        {generalError && <div className="error-message general-error">{generalError}</div>}
+
         {!showResetForm ? (
-          // Login Form
           <form onSubmit={handleSubmit} className="login-form">
             <div className="form-group">
               <Input
@@ -166,7 +112,7 @@ const LoginPage = () => {
                 required
               />
             </div>
-            
+
             <div className="form-group">
               <Input
                 type="password"
@@ -179,35 +125,26 @@ const LoginPage = () => {
                 required
               />
             </div>
-            
-            <Button
-              type="submit"
-              className="btn-primary btn-full-width"
-              disabled={loading}
-            >
+
+            <Button type="submit" className="btn-primary btn-full-width" disabled={loading}>
               {loading ? 'Signing In...' : 'Sign In'}
             </Button>
-            
+
             <div className="login-options">
-              <button 
-                type="button" 
-                className="text-button" 
-                onClick={toggleResetForm}
-              >
+              <button type="button" className="text-button" onClick={toggleResetForm}>
                 Forgot Password?
               </button>
             </div>
           </form>
         ) : (
-          // Password Reset Form
           <div className="reset-password-container">
             {resetSent ? (
               <div className="reset-success">
                 <i className="fas fa-check-circle"></i>
                 <h3>Password Reset Email Sent</h3>
                 <p>
-                  We've sent password reset instructions to {resetEmail}.
-                  Please check your inbox and follow the provided link.
+                  We've sent password reset instructions to {resetEmail}. Please check your inbox
+                  and follow the provided link.
                 </p>
                 <Button
                   type="button"
@@ -220,14 +157,9 @@ const LoginPage = () => {
             ) : (
               <form onSubmit={handleResetPassword} className="reset-form">
                 <h3>Reset Your Password</h3>
-                <p>Enter your email address and we'll send you instructions to reset your password.</p>
-                
-                {resetError && (
-                  <div className="error-message">
-                    {resetError}
-                  </div>
-                )}
-                
+                <p>Enter your email address and we'll send instructions to reset your password.</p>
+                {resetError && <div className="error-message">{resetError}</div>}
+
                 <div className="form-group">
                   <Input
                     type="email"
@@ -239,29 +171,23 @@ const LoginPage = () => {
                     required
                   />
                 </div>
-                
-                <Button
-                  type="submit"
-                  className="btn-primary btn-full-width"
-                  disabled={loading}
-                >
+
+                <Button type="submit" className="btn-primary btn-full-width" disabled={loading}>
                   {loading ? 'Sending...' : 'Send Reset Link'}
                 </Button>
-                
-                <button 
-                  type="button" 
-                  className="text-button" 
-                  onClick={toggleResetForm}
-                >
+
+                <button type="button" className="text-button" onClick={toggleResetForm}>
                   Back to Login
                 </button>
               </form>
             )}
           </div>
         )}
-        
+
         <div className="login-footer">
-          <p>Don't have an account? <Link to="/questionnaire">Get Started</Link></p>
+          <p>
+            Don't have an account? <Link to="/questionnaire">Get Started</Link>
+          </p>
         </div>
       </div>
     </div>

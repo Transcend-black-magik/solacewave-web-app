@@ -1,128 +1,141 @@
 const { onRequest } = require("firebase-functions/v2/https");
 const { setGlobalOptions } = require("firebase-functions/v2");
 const { defineSecret } = require("firebase-functions/params");
-const functions = require("firebase-functions");
 const express = require("express");
 const cors = require("cors");
 const SibApiV3Sdk = require("sib-api-v3-sdk");
 const crypto = require("crypto");
+const fetch = require("node-fetch");
 
-// --- Square SDK Setup ---
-let Square, Client, Environment;
+// --- Firebase Secret Definitions ---
+const squareAccessToken = defineSecret("SQUARE_ACCESS_TOKEN");
+const squareLocationId = defineSecret("SQUARE_LOCATION_ID");
+const squareEnv = defineSecret("SQUARE_ENV");
+const brevoApiKey = defineSecret("BREVO_API_KEY");
 
-try {
-  Square = require("square");
-  ({ Client, Environment } = Square);
-  console.log("✅ Square SDK loaded successfully");
-} catch (e) {
-  console.error("❌ Failed to import Square SDK:", e);
-  Square = {};
-}
-
-// Set Firebase defaults
+// --- Firebase Config ---
 setGlobalOptions({
   region: "us-central1",
   maxInstances: 10,
 });
 
+// --- Initialize Express App ---
 const app = express();
 app.use(cors({ origin: true }));
 app.use(express.json());
 
-// --- Square Client Setup ---
-const squareClient = Client
-  ? new Client({
-      environment:
-        process.env.SQUARE_ENV === "sandbox"
-          ? Environment.Sandbox
-          : Environment.Production,
-      accessToken: process.env.SQUARE_ACCESS_TOKEN || "",
-    })
-  : null;
-
-  if (!squareClient) {
-  console.error("❌ Square SDK not initialized. Payment routes will fail until fixed.");
+// --- Square SDK Setup ---
+let Client, Environment;
+try {
+  const Square = require("square");
+  ({ Client, Environment } = Square);
+  console.log("✅ Square SDK loaded successfully");
+} catch (e) {
+  console.error("❌ Failed to load Square SDK:", e);
 }
 
-const locationId = process.env.SQUARE_LOCATION_ID || "LXXXXXXXXXXXX";
-
-if (!process.env.SQUARE_ACCESS_TOKEN) {
-  console.warn("⚠️ SQUARE_ACCESS_TOKEN not set in environment!");
-}
-
-const paymentsApi = squareClient.paymentsApi;
-
-
-
-
-// --- Brevo Setup ---
-const brevoApiKey = defineSecret("BREVO_API_KEY");
-const getBrevoClient = () => {
-  const defaultClient = SibApiV3Sdk.ApiClient.instance;
-  const apiKey = defaultClient.authentications["api-key"];
-  apiKey.apiKey = brevoApiKey.value();
-  return new SibApiV3Sdk.TransactionalEmailsApi();
+// --- Helper: Setup Square Client ---
+const getSquareClient = (env, token) => {
+  if (!Client || !Environment) return null;
+  return new Client({
+    environment: env === "sandbox" ? Environment.Sandbox : Environment.Production,
+    accessToken: token,
+  });
 };
 
-// --- CORS Headers ---
+// --- Helper: CORS Headers ---
 const setCorsHeaders = (res) => {
   res.set("Access-Control-Allow-Origin", "*");
   res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
 };
 
-// --- Validation ---
+// --- Validate Payment Body ---
 const validateBody = (body) => {
   if (!body.sourceId) return "Missing sourceId (card token).";
-  if (!body.amountCents || isNaN(body.amountCents))
-    return "Missing or invalid amountCents.";
+  if (!body.amountCents || isNaN(body.amountCents)) return "Missing or invalid amountCents.";
   if (!body.currency) return "Missing currency.";
   return null;
 };
 
-// --- Square Create Payment Endpoint ---
+// --- MAIN PAYMENT ENDPOINT ---
 app.post("/", async (req, res) => {
-  try {
-    const { sourceId, amountCents, currency = "USD", name, email, metadata } =
-      req.body;
+  setCorsHeaders(res);
+  if (req.method === "OPTIONS") return res.status(200).send("");
 
+  try {
+    const { sourceId, amountCents, currency = "USD", name, email, metadata } = req.body;
     const validationError = validateBody({ sourceId, amountCents, currency });
     if (validationError) {
       return res.status(400).json({ success: false, message: validationError });
     }
 
-    const idempotencyKey = crypto.randomBytes(16).toString("hex");
+    const token = squareAccessToken.value();
+    const env = squareEnv.value() || "production";
+    const locationId = squareLocationId.value();
 
+    const squareClient = getSquareClient(env, token);
+    if (!squareClient) throw new Error("Square SDK not initialized properly.");
+
+    const idempotencyKey = crypto.randomBytes(16).toString("hex");
     const body = {
       sourceId,
       idempotencyKey,
-      amountMoney: {
-        amount: Number(amountCents),
-        currency: currency.toUpperCase(),
-      },
-      note: `Payment by ${name || "customer"} ${
-        email ? `(${email})` : ""
-      } via Web`,
+      amountMoney: { amount: Number(amountCents), currency: currency.toUpperCase() },
+      note: `Payment by ${name || "customer"} ${email ? `(${email})` : ""}`,
       buyerEmailAddress: email || undefined,
+      locationId,
       referenceId: metadata ? JSON.stringify(metadata) : undefined,
     };
 
-    const response = await paymentsApi.createPayment(body);
+    const response = await squareClient.paymentsApi.createPayment(body);
     const payment = response.result?.payment;
-
-    return res.status(200).json({ success: true, payment });
+    res.status(200).json({ success: true, payment });
   } catch (error) {
     console.error("❌ Square createPayment error:", error);
     const safeMessage =
-      error?.response?.body?.errors
-        ?.map((e) => e.detail || e.message)
-        .join(" ") || error.message || "Payment failed";
-    return res.status(500).json({ success: false, message: safeMessage });
+      error?.response?.body?.errors?.map((e) => e.detail || e.message).join(" ") ||
+      error.message ||
+      "Payment failed";
+    res.status(500).json({ success: false, message: safeMessage });
+  }
+});
+
+/* -------------------------------------------------------------------------- */
+/*                           Exchange Rate Endpoint                           */
+/* -------------------------------------------------------------------------- */
+app.get("/api/rates", async (req, res) => {
+  try {
+    const resp = await fetch("https://api.exchangerate.host/latest?base=NGN&symbols=USD,EUR,CAD");
+    const data = await resp.json();
+    res.json(data);
+  } catch (err) {
+    console.error("Rate fetch error:", err);
+    res.status(500).json({ error: "Failed to fetch exchange rates" });
+  }
+});
+
+/* -------------------------------------------------------------------------- */
+/*                              DEBUG: Secret Check                           */
+/* -------------------------------------------------------------------------- */
+app.get("/debug/secrets", async (req, res) => {
+  try {
+    const result = {
+      SQUARE_ACCESS_TOKEN: squareAccessToken.value() ? "✅ loaded" : "❌ missing",
+      SQUARE_LOCATION_ID: squareLocationId.value() ? "✅ loaded" : "❌ missing",
+      SQUARE_ENV: squareEnv.value() || "undefined",
+      BREVO_API_KEY: brevoApiKey.value() ? "✅ loaded" : "❌ missing",
+    };
+    res.status(200).json({ success: true, secrets: result });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
 
-// Newsletter subscription function
+/* -------------------------------------------------------------------------- */
+/*                         Newsletter Subscription Route                      */
+/* -------------------------------------------------------------------------- */
 exports.subscribeNewsletter = onRequest(
   {
     secrets: [brevoApiKey],
@@ -258,7 +271,9 @@ exports.subscribeNewsletter = onRequest(
   }
 );
 
-// Contact form submission function
+/* -------------------------------------------------------------------------- */
+/*                         Contact Form Submission Route                      */
+/* -------------------------------------------------------------------------- */
 exports.submitContactForm = onRequest(
   {
     secrets: [brevoApiKey],
@@ -411,7 +426,10 @@ exports.submitContactForm = onRequest(
   }
 );  
 
-// Account deletion request function
+/* -------------------------------------------------------------------------- */
+/*                          Account Deletion Request Route                    */
+/* -------------------------------------------------------------------------- */
+
 exports.requestAccountDeletion = onRequest(
   {
     secrets: [brevoApiKey],
@@ -650,18 +668,8 @@ exports.requestAccountDeletion = onRequest(
   }
 );
 
-app.get("/api/rates", async (req, res) => {
-  try {
-    const resp = await fetch("https://api.exchangerate.host/latest?base=NGN&symbols=USD,EUR,CAD");
-    const data = await resp.json();
-    res.json(data);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch exchange rates" });
-  }
-});
-
-// Export payment endpoint
+// --- Export Express App ---
 exports.createSquarePayment = onRequest(
-  { cors: true, invoker: 'public' }, // optional config
-  app
+  { cors: true, invoker: "public", secrets: [squareAccessToken, squareLocationId, squareEnv, brevoApiKey] },
+  (req, res) => app(req, res)
 );

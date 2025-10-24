@@ -224,7 +224,7 @@ const LandingPage = () => {
                 justifyContent: 'center',
                 gap: '8px',
                 padding: '14px 24px',
-                background: '#e3a683ff',
+                background: '#833c13',
                 color: '#fff',
                 borderRadius: '8px',
                 fontWeight: 600,
