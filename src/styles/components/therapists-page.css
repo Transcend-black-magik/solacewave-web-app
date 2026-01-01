@@ -370,6 +370,37 @@
     opacity: 1;
     transform: translateY(0);
   }
+
+  .therapist-bio-section {
+  margin-top: 1rem;
+  overflow: hidden;
+}
+
+.bio-toggle-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: color 0.3s ease;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.bio-toggle-btn:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+.therapist-bio {
+  margin-top: 0.5rem;
+  line-height: 1.6;
+  font-size: 0.95rem;
+  color: #444;
+}
+
   
   @keyframes spin {
     to {

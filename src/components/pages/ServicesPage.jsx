@@ -149,11 +149,11 @@ const ServicesPage = () => {
   };
 
   const planPrices = {
-    single: 20000,
-    "3sessions": 55000,
-    "6sessions": 105000,
-    pocket1: 7000,
-    pocket3: 20000,
+    single: 25000,
+    "3sessions": 70000,
+    "6sessions": 140000,
+    pocket1: 20000,
+    pocket3: 55000,
     pocket6: 40000,
   };
   // ==== FIXED PRICES PER CURRENCY (NO LIVE FX) ====
@@ -403,7 +403,7 @@ Please confirm my booking.`;
     {
       id: "single",
       name: "Single Session",
-      price: "₦20,000",
+      price: "₦25,000",
       description: "One video or phone call session",
       features: [
         "One-on-one coaching",
@@ -415,7 +415,7 @@ Please confirm my booking.`;
     {
       id: "3sessions",
       name: "3 Sessions",
-      price: "₦55,000",
+      price: "₦70,000",
       description: "Save ₦5,000",
       features: [
         "Three video or phone sessions",
@@ -427,8 +427,8 @@ Please confirm my booking.`;
     {
       id: "6sessions",
       name: "6 Sessions",
-      price: "₦105,000",
-      description: "Save ₦15,000",
+      price: "₦140,000",
+      description: "Save ₦10,000",
       popular: true,
       features: [
         "Six video or phone sessions",
@@ -443,7 +443,7 @@ Please confirm my booking.`;
     {
       id: "pocket1",
       name: "Coach in My Pocket",
-      price: "₦7,000",
+      price: "₦20,000",
       period: " / Week",
       note: "Requires an active therapy plan",
       features: [
@@ -457,7 +457,7 @@ Please confirm my booking.`;
     {
       id: "pocket3",
       name: "Coach in My Pocket",
-      price: "₦20,000",
+      price: "₦55,000",
       period: " /3 Weeks",
       note: "Available only with an active therapy plan",
       features: [

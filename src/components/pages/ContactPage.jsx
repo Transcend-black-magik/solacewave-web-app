@@ -221,6 +221,8 @@ const ContactPage = () => {
             </div>
           </div>
         </section>
+
+        
         
         <section className="contact-options-section">
           <div className="container">
@@ -317,6 +319,44 @@ const ContactPage = () => {
                   </button>
                 </form>
               </div> */}
+
+                      {/* 🔶 Important Notice Section */}
+        <section className="important-notice-section animate-on-scroll">
+          <div className="container">
+            <div className="important-notice-card">
+              <h2>🚨 Important Notice</h2>
+              <p className="notice-intro">
+                <strong>Solace Wave Therapy is not a crisis or emergency service.</strong><br />
+                If you are in distress or need immediate mental health support, please reach out to the helplines below:
+              </p>
+
+              <div className="notice-item">
+                <h3>For mental health or suicide-related crises:</h3>
+                <p>
+                  Call <strong>0800 078 7746</strong> — a 24-hour helpline offering free and confidential support.
+                </p>
+                <a href="https://findahelpline.com/countries/ng/topics/suicidal-thoughts" target="_blank" rel="noopener noreferrer">
+                  Visit findahelpline.com
+                </a>
+              </div>
+
+              <div className="notice-item">
+                <h3>For women experiencing sexual or domestic abuse:</h3>
+                <p>
+                  Call <strong>+234 812 113 3399</strong> for immediate assistance and protection.
+                </p>
+                <a href="https://findahelpline.com/organizations/women-safe-house-sustenance-initiative-24-hour-crisis-helpline" target="_blank" rel="noopener noreferrer">
+                  Visit Women Safe House Sustenance Initiative
+                </a>
+              </div>
+
+              <p className="final-note">
+                If you or someone you know is in danger, please contact local emergency services right away.
+              </p>
+            </div>
+          </div>
+        </section>
+
               
               <div className="contact-info-container animate-on-scroll">
                 <h2>Contact Information</h2>
@@ -373,6 +413,7 @@ const ContactPage = () => {
             </div>
           </div>
         </section>
+        
         
         <section className="faq-contact-section">
           <div className="container">
