@@ -151,7 +151,7 @@ const ServicesPage = () => {
   const planPrices = {
     single: 25000,
     "3sessions": 70000,
-    "6sessions": 140000,
+    "6sessions": 135000,
     pocket1: 20000,
     pocket3: 55000,
     pocket6: 105000,
@@ -427,8 +427,8 @@ Please confirm my booking.`;
     {
       id: "6sessions",
       name: "6 Sessions",
-      price: "₦140,000",
-      description: "Save ₦10,000",
+      price: "₦135,000",
+      description: "Save ₦15,000",
       popular: true,
       features: [
         "Six video or phone sessions",
