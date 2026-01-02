@@ -154,7 +154,7 @@ const ServicesPage = () => {
     "6sessions": 140000,
     pocket1: 20000,
     pocket3: 55000,
-    pocket6: 40000,
+    pocket6: 105000,
   };
   // ==== FIXED PRICES PER CURRENCY (NO LIVE FX) ====
 // These are the exact fixed amounts you provided (yellow in your PDF).
@@ -471,7 +471,7 @@ Please confirm my booking.`;
     {
       id: "pocket6",
       name: "Coach in My Pocket",
-      price: "₦40,000",
+      price: "₦105,000",
       period: " /6 Weeks",
       note: "Requires an active therapy plan",
       features: [
