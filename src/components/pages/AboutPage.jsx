@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import Header from '../layout/Header';
 import Footer from '../layout/Footer';
 import '../../styles/components/about-page.css';
 
 const AboutPage = () => {
   const [isLoaded, setIsLoaded] = useState(false);
+  const location = useLocation();
+  const region = location.pathname.split("/")[1] || "ng";
+  const base = `/${region}`;
+
 
   useEffect(() => {
     // Add animation delay to simulate content loading
@@ -176,7 +181,9 @@ const AboutPage = () => {
               <p>Ready to take the first step toward better mental health? Start your assessment today and get matched with a therapist who understands your unique needs.</p>
               <div className="cta-buttons">
                 <button onClick={handleGetStarted} className="btn btn-primary btn-lg">Start Assessment</button>
-                <a href="/contact" className="btn btn-secondary btn-lg">Contact Us</a>
+                <Link to={`${base}/contact`} className="btn btn-secondary btn-lg">
+                  Contact Us
+                </Link>
               </div>
             </div>
           </div>
