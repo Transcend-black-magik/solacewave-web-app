@@ -8,9 +8,6 @@ import PaystackButton from "../common/PaystackButton";
 
 const SQUARE_APPLICATION_ID = process.env.REACT_APP_SQUARE_APPLICATION_ID;
 const SQUARE_LOCATION_ID = process.env.REACT_APP_SQUARE_LOCATION_ID;
-
-// Replace with your actual Cloud Function URL (set below instructions show how).
-// Example: const CREATE_PAYMENT_ENDPOINT = "https://us-central1-YOUR_PROJECT_ID.cloudfunctions.net/createSquarePayment";
 const CREATE_PAYMENT_ENDPOINT = "https://us-central1-solacewave-15844.cloudfunctions.net/createSquarePayment";
 
 const ServicesPage = () => {
@@ -26,17 +23,10 @@ const ServicesPage = () => {
   const [clientCountry, setClientCountry] = useState("");
   const [nameError, setNameError] = useState("");
   const [currency, setCurrency] = useState("USD");
-  // const [conversionRates, setConversionRates] = useState({
-  //   USD: 1600,
-  //   EUR: 1700,
-  //   CAD: 1200,
-  // });
   const isNigeriaCurrency = currency === "NGN";
   const location = useLocation();
   const region = location.pathname.split("/")[1] || "ng";
   const base = `/${region}`;
-
-
 
   // Currency symbol helper
   const getCurrencySymbol = () => {
@@ -178,17 +168,14 @@ const ServicesPage = () => {
   };
 
   const planPrices = {
-    single: 25000,
-    "3sessions": 70000,
-    "6sessions": 135000,
+    single: 30000,
+    "3sessions": 85000,
+    "6sessions": 165000,
     pocket1: 20000,
     pocket3: 55000,
     pocket6: 105000,
   };
-  // ==== FIXED PRICES PER CURRENCY (NO LIVE FX) ====
-// These are the exact fixed amounts you provided (yellow in your PDF).
-// We use them whenever the user pays with card (Square) in USD/EUR/CAD.
-// NGN prices remain as-is for Paystack.
+
   const FIXED_PRICES = {
     USD: {
       single: 16.99,
@@ -196,7 +183,6 @@ const ServicesPage = () => {
       "6sessions": 74.99,
       pocket1: 6.70,
       pocket3: 16.99,
-      // 6 weeks not in PDF — using 2x 3 weeks, rounded to .99 for consistency
       pocket6: 33.99,
     },
     EUR: {
@@ -439,7 +425,7 @@ const ServicesPage = () => {
     {
       id: "single",
       name: "Single Session",
-      price: "₦25,000",
+      price: "₦30,000",
       description: "One video or phone call session",
       features: [
         "One-on-one coaching",
@@ -451,7 +437,7 @@ const ServicesPage = () => {
     {
       id: "3sessions",
       name: "3 Sessions",
-      price: "₦70,000",
+      price: "₦85,000",
       description: "Save ₦5,000",
       features: [
         "Three video or phone sessions",
@@ -463,7 +449,7 @@ const ServicesPage = () => {
     {
       id: "6sessions",
       name: "6 Sessions",
-      price: "₦135,000",
+      price: "₦165,000",
       description: "Save ₦15,000",
       popular: true,
       features: [
